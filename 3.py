@@ -18,23 +18,23 @@ def checkControl(control):
             return True
     return False
 
-# def checkSecurity(security):
-#     for i in range(len(security)):
-#         if security[i].isinteger() and security[i] > 0:
-#             return False
-#     if len(security) >= 2:
-#         return True
-#     return False
-    
-# print(checkSecurity(("a",2,3)))
+def checkSecurity(security):
+    for i in range(len(security)):
+        if not isinstance(security[i], int):
+            return False
+        if security[i] <= 0:
+            return False
+    if len(security) >= 2:
+        return True
+    return False
 
 def eh_entrada(entry):
     if type(entry) == tuple and len(entry) == 3:
         cifra,control,security = entry[0], entry[1], entry[2]
         if type(cifra) == str and type(control) == str and type(security)==tuple:
-            if checkCifra(cifra) and checkControl(control):
+            if checkCifra(cifra) and checkControl(control) and checkSecurity(security):
                 return True
     #raise ValueError("Entry not supported.")
     return False
 
-print(eh_entrada(("","[olaaa]",(1,2,3))))
+print(eh_entrada(("a","[olaaa]",(1,2))))
