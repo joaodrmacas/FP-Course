@@ -1,3 +1,4 @@
+#-------------------------------------------------------------------------------3.1-----------------------------------------------------------------------------------
 
 def checkCifra(cifra):
     cifra_array = cifra.split("-")
@@ -34,7 +35,7 @@ def eh_entrada(entry):
         if type(cifra) == str and type(control) == str and type(security)==tuple:
             if checkCifra(cifra) and checkControl(control) and checkSecurity(security):
                 return True
-    #raise ValueError("Entry not supported.")
     return False
 
-print(eh_entrada(("a","[olaaa]",(1,2))))
+#-------------------------------------------------------------------------------3.2----------------------------------------------------------------------------------
+
