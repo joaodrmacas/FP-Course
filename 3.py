@@ -120,9 +120,9 @@ def somar_casas(letra,casas_a_andar):
     return abc[casa_letra]
 
 def decifrar_texto(cifra,security):
-    casas = (security/26)
+    casas = security
     while casas > 26:
-        casas = (casas/26)
+        casas -= 26
     casas = int(-(-casas // 1)) #arrendondar para cima
     cifra = list(cifra)
     for i in range(len(cifra)):
@@ -137,7 +137,6 @@ def decifrar_texto(cifra,security):
         else:
             cifra[i] = somar_casas(cifra[i],casas_a_somar)
     return convertTuple(cifra)
-
 
 #-------------------------------------------------------------------------------4.3-----------------------------------------------------------------------------------
 
@@ -154,3 +153,4 @@ def decifrar_bdb(lista_bdb):
     return new_list
 
 bdb = [('qgfo-qutdo-s-egoes-wzegsnfmjqz', '[abcde]', (2223,424,1316,99)), ('lctlgukvzwy-ji-xxwmzgugkgw', '[abxyz]', (2388, 367, 5999)), ('nyccjoj-vfrex-ncalml', '[xxxxx]', (50, 404))]
+print(decifrar_bdb(bdb))
