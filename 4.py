@@ -11,6 +11,11 @@ def obter_num_seguranca(security):
 
 #-------------------------------------------------------------------------------4.2----------------------------------------------------------------------------------
 
+def convertTuple(tup):
+    str = ""
+    for i in tup:
+        str = str + i
+    return str
 
 def somar_casas(letra,casas_a_andar):
     abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -35,6 +40,6 @@ def decifrar_texto(cifra,security):
             cifra[i] = " "
         else:
             cifra[i] = somar_casas(cifra[i],casas_a_somar)
-    return str(cifra)
+    return convertTuple(cifra)
 
 print(decifrar_texto('qgfo-qutdo-s-egoes-wzegsnfmjqz', 325))
