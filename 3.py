@@ -47,14 +47,15 @@ def count_letters(word):
     
     return letter_list, letter_number
 
-def bubbleSort(letter_list,number_list):
+def fiveLetters_bubbleSort(letter_list,number_list):
     leng = len(number_list)
     for i in range(leng-1):
         for j in range(leng-i-1):
-            if number_list[j] < number_list[j+1]:
+            if number_list[j] < number_list[j+1] or (number_list[j] == number_list[j+1] and letter_list[j] > letter_list[j+1]):
                 number_list[j],number_list[j+1] = number_list[j+1],number_list[j]
                 letter_list[j],letter_list[j+1] = letter_list[j+1],letter_list[j]
-    return letter_list,number_list
+                
+    return letter_list[:5]
 
 a, b = count_letters("obceadarioooi")
-print(bubbleSort(a,b))
+print(fiveLetters_bubbleSort(a,b))
