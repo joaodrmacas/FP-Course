@@ -40,14 +40,13 @@ def eh_entrada(entry):
 #-------------------------------------------------------------------------------3.2----------------------------------------------------------------------------------
 
 def count_letters(word): #count how many letters a word has
+    delete = 0
     letter_list = list(dict.fromkeys(word))
     letter_number = list(range(0,len(letter_list)))
-    delete = 0
-    for j in range(len(letter_list)):
-        if count_letters[j] == "-":
-            delete = j
-    del letter_list[delete]
-    del letter_number[delete]
+    if "-" in word:
+        delete = letter_list.index("-")
+        del letter_list[delete]
+        del letter_number[delete]
     for i in range(len(letter_list)):
         letter_number[i] = word.count(letter_list[i])
     
@@ -73,5 +72,3 @@ def validar_cifra(cifra, control):
         return True
     return False
 
-print(count_letters("ola-dasda-asd"))
-#falta tirar os "-" da cifra
