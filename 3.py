@@ -39,3 +39,22 @@ def eh_entrada(entry):
 
 #-------------------------------------------------------------------------------3.2----------------------------------------------------------------------------------
 
+def count_letters(word):
+    letter_list = list(dict.fromkeys(word))
+    letter_number = list(range(0,len(letter_list)))
+    for i in range(len(letter_list)):
+        letter_number[i] = word.count(letter_list[i])
+    
+    return letter_list, letter_number
+
+def bubbleSort(letter_list,number_list):
+    leng = len(number_list)
+    for i in range(leng-1):
+        for j in range(leng-i-1):
+            if number_list[j] < number_list[j+1]:
+                number_list[j],number_list[j+1] = number_list[j+1],number_list[j]
+                letter_list[j],letter_list[j+1] = letter_list[j+1],letter_list[j]
+    return letter_list,number_list
+
+a, b = count_letters("obceadarioooi")
+print(bubbleSort(a,b))
