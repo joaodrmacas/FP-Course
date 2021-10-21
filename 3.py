@@ -39,15 +39,21 @@ def eh_entrada(entry):
 
 #-------------------------------------------------------------------------------3.2----------------------------------------------------------------------------------
 
-def count_letters(word):
+def count_letters(word): #count how many letters a word has
     letter_list = list(dict.fromkeys(word))
     letter_number = list(range(0,len(letter_list)))
+    delete = 0
+    for j in range(len(letter_list)):
+        if count_letters[j] == "-":
+            delete = j
+    del letter_list[delete]
+    del letter_number[delete]
     for i in range(len(letter_list)):
         letter_number[i] = word.count(letter_list[i])
     
     return letter_list, letter_number
 
-def fiveLetters_bubbleSort(letter_list,number_list):
+def fiveLetters_bubbleSort(letter_list,number_list): #sorts the 5 most repeated letters and in case of tie, sorts alphabetically
     leng = len(number_list)
     for i in range(leng-1):
         for j in range(leng-i-1):
@@ -57,5 +63,15 @@ def fiveLetters_bubbleSort(letter_list,number_list):
                 
     return letter_list[:5]
 
-a, b = count_letters("obceadarioooi")
-print(fiveLetters_bubbleSort(a,b))
+def validar_cifra(cifra, control):
+    five_letters, numbers = count_letters(cifra)
+    five_letters = fiveLetters_bubbleSort(five_letters,numbers)
+    string = ""
+    for letter in five_letters:
+        string += letter
+    if string == control[1:6]:
+        return True
+    return False
+
+print(count_letters("ola-dasda-asd"))
+#falta tirar os "-" da cifra
