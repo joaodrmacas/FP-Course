@@ -72,3 +72,22 @@ def validar_cifra(cifra, control):
         return True
     return False
 
+#-------------------------------------------------------------------------------3.3----------------------------------------------------------------------------------
+
+def filtrar_bdb(entry_list): #devia retornar uma lista de tuplos
+    not_valid = []
+    if type(entry_list) != list or len(entry_list) < 1:
+        raise ValueError("filtrar bdb: argumento invalido")
+    for bdb in entry_list:
+        if not eh_entrada(bdb): #e suposto verificar se a lista tem entradas corretaas?
+            raise ValueError("filtrar bdb: argumento invalido")
+        if not validar_cifra(bdb[0],bdb[1]):
+            not_valid += bdb
+    return not_valid
+
+bdb = [("aaaaa-bbb-zx-yz-xy", "[abxyz]", (950,300)),
+("a-b-c-d-e-f-g-h", "[abcde]", (124,325,7)),
+("entrada-muito-errada", "[abcde]", (50,404)),
+("eu-sou-muito-gay", "[asdef]",(50,44))]
+
+print(filtrar_bdb(bdb))
