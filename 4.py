@@ -17,15 +17,14 @@ def convertTuple(tup):
         str = str + i
     return str
 
-def somar_casas(letra,casas_a_andar):
-    abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    casa_letra = abc.index(letra)
-    casa_letra += casas_a_andar
-    if(casa_letra) > 25:
-        casa_letra -= 26
-    return abc[casa_letra]
-
 def decifrar_texto(cifra,security):
+    def somar_casas(letra,casas_a_andar):
+        abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        casa_letra = abc.index(letra)
+        casa_letra += casas_a_andar
+        if(casa_letra) > 25:
+            casa_letra -= 26
+        return abc[casa_letra]
     casas = security
     while casas > 26:
         casas -= 26

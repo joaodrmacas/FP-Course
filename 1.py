@@ -1,19 +1,5 @@
 #-----------------------------------------------------------------1.1--------------------------------------------------------------------------
 
-def has_surto (string):
-    if len(string)>1:
-        for i in range(0,len(string)-1):
-            if string[i].islower() and string[i+1].isupper():
-                if string[i] == string[i+1].lower():
-                    return True,i
-            elif string[i].isupper() and string[i+1].islower():
-                if string[i] == string[i+1].upper():
-                    return True,i
-        else:
-            return False,i
-    else:
-        return False,1
-
 def convertTuple(tup):
     str = ""
     for i in tup:
@@ -21,6 +7,21 @@ def convertTuple(tup):
     return str
 
 def corrigir_palavra(string):
+
+    def has_surto (string):
+        if len(string)>1:
+            for i in range(0,len(string)-1):
+                if string[i].islower() and string[i+1].isupper():
+                    if string[i] == string[i+1].lower():
+                        return True,i
+                elif string[i].isupper() and string[i+1].islower():
+                    if string[i] == string[i+1].upper():
+                        return True,i
+            else:
+                return False,i
+        else:
+            return False,1
+
     tuplex = string
     t = tuple(string)
     loop,i = has_surto(string)
@@ -56,7 +57,6 @@ def corrigir_doc(text):
         j+=1
     return doc
 
-
 print(corrigir_doc("BuAaXOoxiIKoOkggyrFfhHXxR duJjUTtaCcmMtaAGga \
 eEMmtxXOjUuJQqQHhqoada JlLjbaoOsuUeYy cChgGvValLCwMmWBbclLsNn \
-LyYlMmwmMrRrongTtoOkyYcCK daRfFKkLlhHrtZKqQkkvVKza data tada"))
+LyYlMmwmMrRrongTtoOkyYcCK daRfFKkLlhHrtZKqQkkvVKza"))
