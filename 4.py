@@ -25,6 +25,7 @@ def decifrar_texto(cifra,security):
         if(casa_letra) > 25:
             casa_letra -= 26
         return abc[casa_letra]
+        
     casas = security
     while casas > 26:
         casas -= 26

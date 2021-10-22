@@ -38,7 +38,7 @@ def eh_senha_valida(password,entry):
 
 def filtrar_senhas(entry):
     wrong_password = []
-    if type(entry) != list:
+    if type(entry) != list or len(entry) < 1:
         raise ValueError("filtrar senhas:argumento invalido")
     for dictionary in entry:
         if not eh_utilizador(dictionary):
@@ -46,3 +46,5 @@ def filtrar_senhas(entry):
         if not eh_senha_valida(dictionary["pass"],dictionary["rule"]):
             wrong_password.append(dictionary["name"])
     return sorted(wrong_password)
+
+print(filtrar_senhas([]))
