@@ -42,14 +42,20 @@ def eh_anagrama(string1,string2):
 
 #-----------------------------------------------------------------1.3--------------------------------------------------------------------------
 
-def corrigir_doc(text): #comparar com todas as palavras anteriores
+def corrigir_doc(text):
     doc = text.split(" ")
     for i in range(len(doc)):
-       doc[i] = corrigir_palavra(doc[i])
-    for j in range(len(doc)-2):
-        if eh_anagrama(doc[j],doc[j+1]):
-            doc.remove(doc[j+1]) 
+        doc[i] = corrigir_palavra(doc[i])
+    j,k= 0,0
+    while j < len(doc):
+        while k < len(doc):
+            if eh_anagrama(doc[j],doc[k]):
+                doc.remove(doc[k])
+            k += 1
+        k=0
+        j+=1
     return doc
+
 
 print(corrigir_doc("BuAaXOoxiIKoOkggyrFfhHXxR duJjUTtaCcmMtaAGga \
 eEMmtxXOjUuJQqQHhqoada JlLjbaoOsuUeYy cChgGvValLCwMmWBbclLsNn \
