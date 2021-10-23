@@ -1,4 +1,4 @@
-#To do: Substituir o "converTuple" pelo .append() se der; rebustar o programa; 
+#To do: tirar a variavel global
 
 board = [[0,0,0,0,0],[0,1,2,3,0],[0,4,5,6,0],[0,7,8,9,0],[0,0,0,0,0]]
 
@@ -297,6 +297,11 @@ def eh_utilizador(entry):
         for key in dict_keys:
             if not key in entry:
                 return False
+        for key in entry:
+            if not key in dict_keys:
+                return False
+        if len(entry["name"]) < 1 or len(entry["pass"]) < 1:
+            return False
         if type(entry["name"]) == str and type(entry["pass"]) == str and type(entry["rule"]) == dict:
             for key_rule in rule_keys:
                 if not key_rule in entry["rule"]:
@@ -312,13 +317,13 @@ def eh_utilizador(entry):
 
 def eh_senha_valida(password,entry):
     # regra individual
-    if not entry["vals"][0] < password.count(entry["char"]) < entry["vals"][1]:
+    if not entry["vals"][0] <= password.count(entry["char"]) <= entry["vals"][1]:
         return False
     #regras gerais
     repeated_letter_flag = 0
     vowel_count = password.count("a") + password.count("e") + password.count("i") + password.count("o") + password.count("u")
-    for letter in password:
-        if password.count(letter) >= 2:
+    for i in range(len(password)-1):
+        if password[i] == password[i+1]:
             repeated_letter_flag = 1
     if vowel_count < 3 or repeated_letter_flag == 0:
         return False
@@ -329,10 +334,12 @@ def eh_senha_valida(password,entry):
 def filtrar_senhas(entry):
     wrong_password = []
     if type(entry) != list or len(entry) < 1:
-        raise ValueError("filtrar senhas:argumento invalido")
+        raise ValueError("filtrar_senhas: argumento invalido")
     for dictionary in entry:
         if not eh_utilizador(dictionary):
-            raise ValueError("filtrar senhas:argumento invalido")
+            raise ValueError("filtrar_senhas:argumento invalido")
         if not eh_senha_valida(dictionary["pass"],dictionary["rule"]):
             wrong_password.append(dictionary["name"])
     return sorted(wrong_password)
+
+print(eh_senha_valida("aabcade", {"vals": (1,3), "char":"a"}))
