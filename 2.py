@@ -45,8 +45,19 @@ def obter_digito (sequence, position):
 #-----------------------------------------------------------------2.3--------------------------------------------------------------------------
 
 def obter_pin(sequence_list):
+    if type(sequence_list) != tuple or not( 4 <= len(sequence_list) <= 10 ):
+        raise ValueError("obter_pin: argumento invalido")
+    for sequence in sequence_list:
+        if not sequence.isalpha() or len(sequence) < 1:
+            raise ValueError("obter_pin: argumento invalido")
+        for letter in sequence:
+            if letter != "C" and letter != "B" and letter != "D" and letter != "E":
+                raise ValueError("obter_pin: argumento invalido")
     pin = ()
     pin += (obter_digito(sequence_list[0],5),)
     for i in range(1,len(sequence_list)):
         pin += (obter_digito(sequence_list[i],pin[i-1]),)
     return pin
+
+t = ("CEE", "DDBBB", "ECDBE", "CCCCB")
+print(obter_pin(t))
