@@ -58,6 +58,3 @@ def obter_pin(sequence_list):
     for i in range(1,len(sequence_list)):
         pin += (obter_digito(sequence_list[i],pin[i-1]),)
     return pin
-
-t = ("CEE", "DDBBB", "ECDBE", "CCCCB")
-print(obter_pin(t))

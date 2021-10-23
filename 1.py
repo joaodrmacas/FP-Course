@@ -71,5 +71,4 @@ def corrigir_doc(text):
         else:
             final_doc += " " + word
     return final_doc
-
-print(corrigir_doc("ola eu osu"))
+    

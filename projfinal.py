@@ -48,6 +48,22 @@ def eh_anagrama(string1,string2):
 #-----------------------------------------------------------------1.3--------------------------------------------------------------------------
 
 def corrigir_doc(text):
+
+    def isDoubleSpace(string):
+        for i in range(len(string)-1):
+            if string[i] == " " and string[i+1] == " ":
+                return True
+        return False
+
+    if type(text) != str or len(text) < 1 or isDoubleSpace(text):
+        raise ValueError("corrigir_doc: argumento invalido")
+
+    for letter in text:
+        if letter != " ":
+            if not letter.isalpha():
+                raise ValueError("corrigir_doc: argumento invalido")
+
+    final_doc = ""
     doc = text.split(" ")
     for i in range(len(doc)):
         doc[i] = corrigir_palavra(doc[i])
@@ -59,8 +75,15 @@ def corrigir_doc(text):
             k += 1
         k=0
         j+=1
-    return doc
-
+    iteracoes = 0
+    for word in doc:
+        if iteracoes == 0:
+            final_doc = word
+        else:
+            final_doc += " " + word
+        iteracoes += 1
+    return final_doc
+    
 #-----------------------------------------------------------------2.1--------------------------------------------------------------------------
 
 def obter_posicao (direction, position):
@@ -106,6 +129,14 @@ def obter_digito (sequence, position):
 #-----------------------------------------------------------------2.3--------------------------------------------------------------------------
 
 def obter_pin(sequence_list):
+    if type(sequence_list) != tuple or not( 4 <= len(sequence_list) <= 10 ):
+        raise ValueError("obter_pin: argumento invalido")
+    for sequence in sequence_list:
+        if not sequence.isalpha() or len(sequence) < 1:
+            raise ValueError("obter_pin: argumento invalido")
+        for letter in sequence:
+            if letter != "C" and letter != "B" and letter != "D" and letter != "E":
+                raise ValueError("obter_pin: argumento invalido")
     pin = ()
     pin += (obter_digito(sequence_list[0],5),)
     for i in range(1,len(sequence_list)):
@@ -122,12 +153,14 @@ def eh_entrada(entry):
             for i in range(len(cifra_array[j])):
                 if not cifra_array[j][i].isalpha():
                     return False
-            if len(cifra_array[j]) < 1 and not cifra_array[j].islower():
+            if len(cifra_array[j]) < 1 or not cifra_array[j].islower():
                 return False
         return True
 
     def checkControl(control):
-        if control[0] == "[" and control[-1] == "]" and len(control) == 7:
+        if len(control) != 7:
+            return False
+        if control[0] == "[" and control[-1] == "]":
             for i in range(1,6):
                 if not control[i].isalpha():
                     return False
@@ -193,10 +226,10 @@ def validar_cifra(cifra, control):
 def filtrar_bdb(entry_list):
     not_valid = []
     if type(entry_list) != list or len(entry_list) < 1:
-        raise ValueError("filtrar bdb: argumento invalido")
+        raise ValueError("filtrar_bdb: argumento invalido")
     for bdb in entry_list:
         if not eh_entrada(bdb):
-            raise ValueError("filtrar bdb: argumento invalido")
+            raise ValueError("filtrar_bdb: argumento invalido")
         if not validar_cifra(bdb[0],bdb[1]):
             not_valid.append(bdb)
     return not_valid
@@ -245,12 +278,12 @@ def decifrar_texto(cifra,security):
 
 def decifrar_bdb(lista_bdb):
     if type(lista_bdb) != list or len(lista_bdb) < 1:
-        raise ValueError("decifrar bdb: argumento invalido")
+        raise ValueError("decifrar_bdb: argumento invalido")
     new_list = list(range(len(lista_bdb)))
     security_list = list(range(len(lista_bdb)))
     for i in range(len(lista_bdb)):
         if not eh_entrada(lista_bdb[i]):
-            raise ValueError("decifrar bdb: argumento invalido")
+            raise ValueError("decifrar_bdb: argumento invalido")
         security_list[i] = obter_num_seguranca(lista_bdb[i][2])
         new_list[i] = decifrar_texto(lista_bdb[i][0],security_list[i])
     return new_list
