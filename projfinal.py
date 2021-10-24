@@ -1,18 +1,44 @@
-#To do: tirar a variavel global
+# -------------------------------------------------------------------
+# "Buggy Data Base" : Primeiro Projeto de "Fundamentos de Programação"
+#
+#  
+# Made by: João Maçãs 99970 Leic-A 
+# -------------------------------------------------------------------
 
+#Tabuleiro utilizado para a resolução do capitulo 2 do enunciado
 board = [[0,0,0,0,0],[0,1,2,3,0],[0,4,5,6,0],[0,7,8,9,0],[0,0,0,0,0]]
 
-def convertTuple(tup):
+def convertTupleList(tup):
+    # -------------------------------------------   
+    #    converTupleList: Converte uma Lista/Tuplo para string
+    #
+    #   Parameters:
+    #       tup: Tuple/List
+    #   Return:
+    #       str:String final feita pelos elementos de "tup"
+    # -------------------------------------------
+
     str = ""
     for i in tup:
         str = str + i
     return str
 
-#-----------------------------------------------------------------1.1--------------------------------------------------------------------------
-
 def corrigir_palavra(string):
-
+    # -------------------------------------------   
+    #    corrigir_palavra: dada uma palavra "string", a funcao procura por
+    #   surtos e corrige-os
+    #
+    #   Parameters:
+    #       string: Palavra potencialmente com surto
+    #   Return:
+    #       tuplex: string da palavra sem surtos
+    # -------------------------------------------
     def has_surto (string):
+        # -------------------------------------------   
+        #    has_surto: Dado uma palavra, verifica se existe algum surto
+        #   (ter uma letra minuscula e imediatamente a seguir a mesma letra
+        #   maiuscula). Retorna o booleano e o indice da 1a letra caso tenha
+        # -------------------------------------------
         if len(string)>1:
             for i in range(0,len(string)-1):
                 if string[i].islower() and string[i+1].isupper():
@@ -32,24 +58,45 @@ def corrigir_palavra(string):
     while(loop):
         t = tuple(tuplex)
         tuplex = t[:i] + t[i+2:]
-        tuplex = convertTuple(tuplex)
+        tuplex =  convertTupleList(tuplex)
         loop,i = has_surto(tuplex)
     return tuplex
 
-#-----------------------------------------------------------------1.2--------------------------------------------------------------------------
-
 def eh_anagrama(string1,string2):
+    # -------------------------------------------   
+    #    eh_anagrama: Verifica se "string1" e "string2" sao anagramas.
+    #   Caso sejam a mesma palavra não é considerado anagrama.
+    #
+    #   Parameters:
+    #       string1: 1a palavra
+    #       string2: 2a palavra
+    #   Return:
+    #       True -> Se forem anagramas
+    #       False -> Se nao forem
+    # -------------------------------------------
     string1 = string1.upper()
     string2 = string2.upper()
     if(string1 == string2):
         return False
     return sorted(string1) == sorted(string2)
 
-#-----------------------------------------------------------------1.3--------------------------------------------------------------------------
-
 def corrigir_doc(text):
-
+    # -------------------------------------------   
+    #    corrigir_doc: Recebe o texto com erros da documentacao da BDB 
+    #   e devolve a cadeia de carateres filtrada com as palavras corrigidas
+    #   e os anagramas retirados, ficando apenas a sua primeira ocorrencia.
+    #
+    #   Parameters:
+    #       text: String com potencial erros e anagramas
+    #   Return:
+    #       final_doc: String com todos os erros resolvidos e anagramas
+    #   retirados
+    # -------------------------------------------
     def isDoubleSpace(string):
+        # -------------------------------------------   
+        #    isDoubleSpace: Percorre uma string e verifica se tem
+        #   duplo espaco "  ".
+        # -------------------------------------------
         for i in range(len(string)-1):
             if string[i] == " " and string[i+1] == " ":
                 return True
@@ -83,11 +130,20 @@ def corrigir_doc(text):
             final_doc += " " + word
         iteracoes += 1
     return final_doc
-    
-#-----------------------------------------------------------------2.1--------------------------------------------------------------------------
 
 def obter_posicao (direction, position):
-    
+    # -------------------------------------------   
+    #    obter_posicao: Calcula a nova posicão do tabuleiro dado uma posicao
+    #   inicial e uma direcao
+    #
+    #   Parameters:
+    #       direction: Direcao do movimento
+    #       position: Posicao inicial
+    #   Return:
+    #       new_pos: Nova posicao apos o movimento
+    #       position: Caso o movimento seja invalido (fora do board), mantem
+    #   posicao
+    # -------------------------------------------
     if direction == "C":
         for i in range(0,5):
             for j in range(0,5):
@@ -118,17 +174,31 @@ def obter_posicao (direction, position):
     
     return position
 
-#-----------------------------------------------------------------2.2--------------------------------------------------------------------------
-
 def obter_digito (sequence, position):
+    # -------------------------------------------   
+    #    obter_digito: Calcula a nova posicao apos uma serie de movimentos
+    #
+    #   Parameters:
+    #       sequence: Serie de movimentos
+    #       position: Posicao inicial
+    #   Return:
+    #       position: Posicao final
+    # -------------------------------------------
     t_sequence = tuple(sequence)
     for i in range(len(t_sequence)):
         position = obter_posicao(t_sequence[i], position)
     return position
 
-#-----------------------------------------------------------------2.3--------------------------------------------------------------------------
-
 def obter_pin(sequence_list):
+    # -------------------------------------------   
+    #    obter_pin: Calcula o pin codificado através do tuplo
+    #  "sequence_list". Valida os argumentos
+    #
+    #   Parameters:
+    #       sequence_list: Tuplo que contem diferentes sequencias de direcoes
+    #   Return:
+    #       pin: Pin Final
+    # -------------------------------------------
     if type(sequence_list) != tuple or not( 4 <= len(sequence_list) <= 10 ):
         raise ValueError("obter_pin: argumento invalido")
     for sequence in sequence_list:
@@ -143,11 +213,22 @@ def obter_pin(sequence_list):
         pin += (obter_digito(sequence_list[i],pin[i-1]),)
     return pin
 
-#-------------------------------------------------------------------------------3.1-----------------------------------------------------------------------------------
-
 def eh_entrada(entry):
-
+    # -------------------------------------------   
+    #    eh_entrada: Verifica se o argumento "entry" corresponde a uma
+    #   entrada BDB, corrupta ou não.
+    #
+    #   Parameters:
+    #       entry: Parametro Universal
+    #   Return:
+    #       True -> Se a "entry" for uma entrada BDB
+    #       False -> Se nao for
+    # -------------------------------------------
     def checkCifra(cifra):
+        # -------------------------------------------   
+        #    checkCifra: Verifica se cumpre todos os requerimentos
+        #   para ser uma cifra
+        # -------------------------------------------
         cifra_array = cifra.split("-")
         for j in range(len(cifra_array)):
             for i in range(len(cifra_array[j])):
@@ -158,6 +239,10 @@ def eh_entrada(entry):
         return True
 
     def checkControl(control):
+        # -------------------------------------------   
+        #    checkControl: Verifica se cumpre todos os requerimentos
+        #   para ser uma sequencia de controlo
+        # -------------------------------------------
         if len(control) != 7:
             return False
         if control[0] == "[" and control[-1] == "]":
@@ -169,6 +254,10 @@ def eh_entrada(entry):
         return False
 
     def checkSecurity(security):
+        # -------------------------------------------   
+        #    checkSecurity: Verifica se cumpre todas os requerimentos
+        #   para ser um numero de controlo
+        # -------------------------------------------
         for i in range(len(security)):
             if not isinstance(security[i], int):
                 return False
@@ -185,14 +274,28 @@ def eh_entrada(entry):
                 return True
     return False
 
-#-------------------------------------------------------------------------------3.2----------------------------------------------------------------------------------
-
 def validar_cifra(cifra, control):
-
-    def count_letters(word): #count how many letters a word has
+    # -------------------------------------------   
+    #    validar_cifra: Verifica se a sequencia de controlo é coerente com a
+    #   cifra
+    #
+    #   Parameters:
+    #       cifra: Cifra
+    #       control: Sequencia de controlo
+    #   Return:
+    #       True -> Se a seq. de controlo é coerente com a cifra
+    #       False -> Se nao for
+    # -------------------------------------------
+    def count_letters(word):
+        # -------------------------------------------   
+        #    count_letters: Conta quantas letras unicas uma palavra tem
+        # -------------------------------------------
         delete = 0
         letter_list = list(dict.fromkeys(word))
         letter_number = list(range(0,len(letter_list)))
+        #Listas associadas em que a letter_list contem a letra num indiice i
+        #e a letter_number contem o numero de vezes que essa letra ha numa
+        #palavra no mesmo indice
         if "-" in word:
             delete = letter_list.index("-")
             del letter_list[delete]
@@ -202,7 +305,11 @@ def validar_cifra(cifra, control):
         
         return letter_list, letter_number
 
-    def fiveLetters_bubbleSort(letter_list,number_list): #sorts the 5 most repeated letters and in case of tie, sorts alphabetically
+    def fiveLetters_bubbleSort(letter_list,number_list): 
+        # -------------------------------------------   
+        #    checkCifra: Cria uma lista organizado pela letra mais vezes
+        #   repetida. Em caso de empate ordena alfabeticamente
+        # -------------------------------------------
         leng = len(number_list)
         for i in range(leng-1):
             for j in range(leng-i-1):
@@ -221,9 +328,17 @@ def validar_cifra(cifra, control):
         return True
     return False
 
-#-------------------------------------------------------------------------------3.3----------------------------------------------------------------------------------
-
 def filtrar_bdb(entry_list):
+    # -------------------------------------------   
+    #    filtrar_bdb: Verifica uma lista de entradas BDB, criando uma nova
+    #   apenas com as entradas cujo checksum nao e coerente com a cifra.
+    #   verifica parametros
+    #
+    #   Parameters:
+    #       entry_list: Lista de supostas entradas BDB
+    #   Return:
+    #       not_valid: Lista de entradas nao coerentes
+    # -------------------------------------------
     not_valid = []
     if type(entry_list) != list or len(entry_list) < 1:
         raise ValueError("filtrar_bdb: argumento invalido")
@@ -234,9 +349,15 @@ def filtrar_bdb(entry_list):
             not_valid.append(bdb)
     return not_valid
     
-#-------------------------------------------------------------------------------4.1----------------------------------------------------------------------------------
-
 def obter_num_seguranca(security):
+    # -------------------------------------------   
+    #    eh_utilizador: Calcula a menor diferenca positiva entre qualquer par de numeros
+    #
+    #   Parameters:
+    #       security: Tuplo de numeros
+    #   Return:
+    #       lowest_dif: Retorna o numero de segurança
+    # -------------------------------------------
     lowest_dif = 2**31-1
     for i in security:
         for j in security:
@@ -245,25 +366,38 @@ def obter_num_seguranca(security):
                 lowest_dif = dif
     return lowest_dif
 
-#-------------------------------------------------------------------------------4.2----------------------------------------------------------------------------------
-
 def decifrar_texto(cifra,security):
+    # -------------------------------------------   
+    #    decifrar_texto: Decifra a cifra através do algoritmo descrito no enunciado
+    #
+    #   Parameters:
+    #       cifra: String nao decifrada 
+    #       security: Numero de segurança
+    #   Return:
+    #       cifra: Retorna a cifra convertida de lista para string 
+    # -------------------------------------------
     def somar_casas(letra,casas_a_andar):
-        abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        # -------------------------------------------   
+        #    somar_casas: Dado uma letra e um numero de "casas" a avançar
+        #   no alfabeto (sendo cada letra uma casa), esta função retorna a
+        #   nova letra.
+        # -------------------------------------------
+        abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',\
+             'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',\
+                'z']
         casa_letra = abc.index(letra)
         casa_letra += casas_a_andar
         if(casa_letra) > 25:
             casa_letra -= 26
         return abc[casa_letra]
-        
     casas = security
     while casas > 26:
         casas -= 26
     casas = int(-(-casas // 1)) #arrendondar para cima
     cifra = list(cifra)
-    for i in range(len(cifra)):
+    for i in range(len(cifra)): 
         casas_a_somar = casas
-        if i%2 == 0:
+        if i%2 == 0:            #verificacao de inidice par ou impar
             casas_a_somar += 1
         else:
             casas_a_somar -= 1
@@ -272,11 +406,18 @@ def decifrar_texto(cifra,security):
             cifra[i] = " "
         else:
             cifra[i] = somar_casas(cifra[i],casas_a_somar)
-    return convertTuple(cifra)
-
-#-------------------------------------------------------------------------------4.3-----------------------------------------------------------------------------------
+    return convertTupleList(cifra)
 
 def decifrar_bdb(lista_bdb):
+    # -------------------------------------------   
+    #    decifrar_bdb: Cria uma lista com as entradas decifradas na mesma
+    #   ordem que as recebeu. Valida os argumentos.
+    #
+    #   Parameters:
+    #       lista_bdb: Lista de entradas BDB
+    #   Return:
+    #       new_list: Retorna lista com as entradas decifradas
+    # -------------------------------------------
     if type(lista_bdb) != list or len(lista_bdb) < 1:
         raise ValueError("decifrar_bdb: argumento invalido")
     new_list = list(range(len(lista_bdb)))
@@ -288,36 +429,54 @@ def decifrar_bdb(lista_bdb):
         new_list[i] = decifrar_texto(lista_bdb[i][0],security_list[i])
     return new_list
 
-#-------------------------------------------------------------------------------5.1----------------------------------------------------------------------------------
-
-def eh_utilizador(entry):
+def eh_utilizador(universal):
+    # -------------------------------------------   
+    #    eh_utilizador: Verifica se um dicionario contem a informacao de 
+    # utilizador relevante da BDB
+    #
+    #   Parameters:
+    #       universal: Parametro Universal
+    #   Return:
+    #       True -> Se a "entry" corresponder ao dicionario com informacao
+    #  correta
+    #       False -> Se nao corresponder
+    # -------------------------------------------
     dict_keys = ["name","pass","rule"]
     rule_keys = ["vals", "char"]
-    if type(entry) == dict:
+    if type(universal) == dict:
         for key in dict_keys:
-            if not key in entry:
+            if not key in universal:#Verifica se as keys corretas estao na "entry"
+                return False 
+        for key in universal:
+            if not key in dict_keys:#Verifica se nao ha keys a mais na "entry"
                 return False
-        for key in entry:
-            if not key in dict_keys:
-                return False
-        if len(entry["name"]) < 1 or len(entry["pass"]) < 1:
+        if len(universal["name"]) < 1 or len(universal["pass"]) < 1:
             return False
-        if type(entry["name"]) == str and type(entry["pass"]) == str and type(entry["rule"]) == dict:
+        if type(universal["name"]) == str and type(universal["pass"]) == str and type(universal["rule"]) == dict:
             for key_rule in rule_keys:
-                if not key_rule in entry["rule"]:
+                if not key_rule in universal["rule"]:
                     return False
-                if type(entry["rule"]["vals"]) == tuple and type(entry["rule"]["char"] == str):
-                    if len(entry["rule"]["vals"]) != 2 or len(entry["rule"]["char"])!=1 or entry["rule"]["vals"][0] > entry["rule"]["vals"][1] :
+                if type(universal["rule"]["vals"]) == tuple and type(universal["rule"]["char"] == str):
+                    if len(universal["rule"]["vals"]) != 2 or len(universal["rule"]["char"])!=1 or universal["rule"]["vals"][0] > universal["rule"]["vals"][1] :
                         return False
                     return True
         return False
     return False
 
-#-------------------------------------------------------------------------------5.2----------------------------------------------------------------------------------
-
-def eh_senha_valida(password,entry):
+def eh_senha_valida(password,dic):
+    # -------------------------------------------   
+    #    eh_senha_valida: Verifica se senha cumpre com todas as regras de 
+    # definicao (gerais e individual)
+    #
+    #   Parameters:
+    #       password: string correspondente a pass do utilizador
+    #       dic: dicionario que contem as regras individuais da pass
+    #   Return:
+    #       True -> Se a senha cumprir com as regras gerais e individuais
+    #       False -> Se nao cumprir
+    # -------------------------------------------
     # regra individual
-    if not entry["vals"][0] <= password.count(entry["char"]) <= entry["vals"][1]:
+    if not dic["vals"][0] <= password.count(dic["char"]) <= dic["vals"][1]:
         return False
     #regras gerais
     repeated_letter_flag = 0
@@ -329,17 +488,23 @@ def eh_senha_valida(password,entry):
         return False
     return True
 
-#-------------------------------------------------------------------------------5.3----------------------------------------------------------------------------------
-
-def filtrar_senhas(entry):
+def filtrar_senhas(dic_list):
+    #  --------------------------------------------
+    #    filtrar_senhas: Recebe uma lista de dicionarios com as informacoes dos
+    #    utilizadores cuja pass está errada. Verifica a validade do parametros
+    #
+    #   Parameters:
+    #       dic_list: Lista de dicionarios com informacao dos utilizadores
+    #   Return:
+    #       wrong_password: Lista ordenada dos nomes dos utilizadores cujas
+    # pass estao erradas
+    # -------------------------------------------
     wrong_password = []
-    if type(entry) != list or len(entry) < 1:
+    if type(dic_list) != list or len(dic_list) < 1:
         raise ValueError("filtrar_senhas: argumento invalido")
-    for dictionary in entry:
+    for dictionary in dic_list:
         if not eh_utilizador(dictionary):
             raise ValueError("filtrar_senhas:argumento invalido")
         if not eh_senha_valida(dictionary["pass"],dictionary["rule"]):
             wrong_password.append(dictionary["name"])
     return sorted(wrong_password)
-
-print(eh_senha_valida("aabcade", {"vals": (1,3), "char":"a"}))
