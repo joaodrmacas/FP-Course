@@ -1,8 +1,8 @@
 # -------------------------------------------------------------------
-# "Buggy Data Base" : Primeiro Projeto de "Fundamentos de Programação"
+# "Buggy Data Base" : Primeiro Projeto de "Fundamentos de Programação" 25/10
 #
 #  
-# Made by: João Maçãs 99970 Leic-A 
+# Made by: João Maçãs 99970 Leic-A -> joaomacas02@tecnico.ulisboa.pt
 # -------------------------------------------------------------------
 
 #Tabuleiro utilizado para a resolução do capitulo 2 do enunciado
@@ -351,7 +351,7 @@ def filtrar_bdb(entry_list):
     
 def obter_num_seguranca(security):
     # -------------------------------------------   
-    #    eh_utilizador: Calcula a menor diferenca positiva entre qualquer par de numeros
+    #    obter_num_seguranca: Calcula a menor diferenca positiva entre qualquer par de numeros
     #
     #   Parameters:
     #       security: Tuplo de numeros
@@ -447,8 +447,8 @@ def eh_utilizador(universal):
         for key in dict_keys:
             if not key in universal:#Verifica se as keys corretas estao na "entry"
                 return False 
-        for key in universal:
-            if not key in dict_keys:#Verifica se nao ha keys a mais na "entry"
+        for keys in universal:
+            if not keys in dict_keys:#Verifica se nao ha keys a mais na "entry"
                 return False
         if len(universal["name"]) < 1 or len(universal["pass"]) < 1:
             return False
@@ -457,7 +457,7 @@ def eh_utilizador(universal):
                 if not key_rule in universal["rule"]:
                     return False
                 if type(universal["rule"]["vals"]) == tuple and type(universal["rule"]["char"] == str):
-                    if len(universal["rule"]["vals"]) != 2 or len(universal["rule"]["char"])!=1 or universal["rule"]["vals"][0] > universal["rule"]["vals"][1] :
+                    if len(universal["rule"]["vals"]) != 2 or len(universal["rule"]["char"])!=1 or universal["rule"]["vals"][0] > universal["rule"]["vals"][1] or universal["rule"]["vals"][0]<1:
                         return False
                     return True
         return False
@@ -504,7 +504,9 @@ def filtrar_senhas(dic_list):
         raise ValueError("filtrar_senhas: argumento invalido")
     for dictionary in dic_list:
         if not eh_utilizador(dictionary):
-            raise ValueError("filtrar_senhas:argumento invalido")
+            raise ValueError("filtrar_senhas: argumento invalido")
         if not eh_senha_valida(dictionary["pass"],dictionary["rule"]):
             wrong_password.append(dictionary["name"])
     return sorted(wrong_password)
+
+print(eh_utilizador({"name":"john.doe", "pass":"aabcde","rule":{"vals": (0,3), "char":"a"}}))
