@@ -450,16 +450,17 @@ def eh_utilizador(universal):
         for keys in universal:
             if not keys in dict_keys:#Verifica se nao ha keys a mais na "entry"
                 return False
+        if type(universal["name"]) != str or type(universal["pass"]) != str or type(universal["rule"]) != dict:
+            return False
         if len(universal["name"]) < 1 or len(universal["pass"]) < 1:
             return False
-        if type(universal["name"]) == str and type(universal["pass"]) == str and type(universal["rule"]) == dict:
-            for key_rule in rule_keys:
-                if not key_rule in universal["rule"]:
+        for key_rule in rule_keys:
+            if not key_rule in universal["rule"]:
+                return False
+            if type(universal["rule"]["vals"]) == tuple and type(universal["rule"]["char"] == str):
+                if len(universal["rule"]["vals"]) != 2 or len(universal["rule"]["char"])!=1 or universal["rule"]["vals"][0] > universal["rule"]["vals"][1] or universal["rule"]["vals"][0]<1:
                     return False
-                if type(universal["rule"]["vals"]) == tuple and type(universal["rule"]["char"] == str):
-                    if len(universal["rule"]["vals"]) != 2 or len(universal["rule"]["char"])!=1 or universal["rule"]["vals"][0] > universal["rule"]["vals"][1] or universal["rule"]["vals"][0]<1:
-                        return False
-                    return True
+                return True
         return False
     return False
 
@@ -508,5 +509,3 @@ def filtrar_senhas(dic_list):
         if not eh_senha_valida(dictionary["pass"],dictionary["rule"]):
             wrong_password.append(dictionary["name"])
     return sorted(wrong_password)
-
-print(eh_utilizador({"name":"john.doe", "pass":"aabcde","rule":{"vals": (0,3), "char":"a"}}))
