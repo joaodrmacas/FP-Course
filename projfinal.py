@@ -509,3 +509,5 @@ def filtrar_senhas(dic_list):
         if not eh_senha_valida(dictionary["pass"],dictionary["rule"]):
             wrong_password.append(dictionary["name"])
     return sorted(wrong_password)
+
+
