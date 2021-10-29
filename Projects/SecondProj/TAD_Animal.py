@@ -7,6 +7,7 @@ def cria_animal(spec,rep,ali):
             else:
                 return {"especie":spec,"idade":0,"reproducao":rep,\
                     "alimentacao":ali,"tipo":"presa","fome":0}
+    raise ValueError("cria_animal: argumentos invalidos")
 
 def cria_copia_animal(a):
     return a.copy()
@@ -78,12 +79,26 @@ def animal_para_str(a):
             str(a["reproducao"]) + ";" + str(a["fome"]) + "/" +\
                 str(a["alimentacao"]) + "]")
 
-cria_animal("rabbit", -5, 0)
-r1 = cria_animal("rabbit", 5, 0)
-f1 = cria_animal("fox", 20, 10)
-f2 = cria_copia_animal(f1)
-f2 = aumenta_idade(aumenta_idade(f2))
-f2 = aumenta_fome(f2)
-print(animal_para_str(f1))
-print(animal_para_str(f2))
-print(animais_iguais(f1,f2))
+def animal_para_char(a):
+    if eh_presa(a):
+        return a["especie"][0].lower()
+    if eh_predador(a):
+        return a["especie"][0].upper()
+
+#Funcoes de alto nivel
+
+def eh_animal_fertil(a):
+    return a["idade"] == a["reproducao"]
+
+def eh_animal_faminto(a):
+    if eh_predador(a):
+        return a["fome"] >= a["alimentação"]
+    return False
+
+def reproduz_animal(a):
+    novo = cria_copia_animal(a)
+    reset_idade(novo)
+    reset_fome(novo)
+    reset_idade(a)
+    return novo
+    
