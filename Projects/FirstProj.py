@@ -104,12 +104,10 @@ def corrigir_doc(text):
 
     if type(text) != str or len(text) < 1 or isDoubleSpace(text):
         raise ValueError("corrigir_doc: argumento invalido")
-
     for letter in text:
         if letter != " ":
             if not letter.isalpha():
                 raise ValueError("corrigir_doc: argumento invalido")
-
     final_doc = ""
     doc = text.split(" ")
     for i in range(len(doc)):
