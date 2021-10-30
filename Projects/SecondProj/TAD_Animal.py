@@ -101,4 +101,4 @@ def reproduz_animal(a):
     reset_fome(novo)
     reset_idade(a)
     return novo
-    
+
