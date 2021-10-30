@@ -233,6 +233,37 @@ def obter_animal(m,p):
     index = m["pos_anim"].index(p)
     return m["animais"][index]
 
+#Modificadores
+
+def eliminar_animal(m,p): #(not working?)
+    tup_pos = ()
+    tup_anim = ()
+    index = m["pos_anim"].index(p)
+    for pos in m["pos_anim"]:
+        if pos != p:
+            tup_pos += (pos,)
+    for i in range(len(m["animais"])):
+        if i != index:
+            tup_anim += (m["animais"][i],)
+    m["pos_anim"] = tup_pos
+    m["animais"] = tup_anim
+    return m
+        
+def mover_animal(m,p1,p2):
+    tup = ()
+    for i in range(len(m["pos_anim"])):
+        if m["pos_anim"][i] != p1:
+            tup += (m["pos_anim"][i],)
+        else:
+            tup += (p2,)
+    m["pos_anim"] = tup
+    return m
+
+def inserir_animal(m,a,p):
+    m["animais"].append(a)
+    m["pos_anim"].append(p)
+    return m
+
 #Reconhecedores
 
 def eh_prado(arg): #preciso checkar se os tuplos sao inteiros/listas? 
@@ -285,13 +316,48 @@ def prado_para_str(m):
         for i in range(obter_tamanho_x(m)):
             coord = cria_posicao(i,j)
             if eh_posicao_animal(m,coord):
-                print("a",end="")
+                animal = obter_animal(m,coord)
+                print(animal_para_char(animal),end="")
             elif eh_posicao_obstaculo(m,coord):
-                print("-", end="")
+                if (coord[0]==0 and coord[1]==0) or (coord[0]==obter_tamanho_x(m)-1\
+                    and coord[1]==0) or (coord[0]==obter_tamanho_x(m)-1 and\
+                        coord[1]==obter_tamanho_y(m)-1) or (coord[0]==0 and\
+                            coord[1]==obter_tamanho_y(m)-1):
+                            print("+",end="")
+                elif coord[0]==0 or coord[0]==obter_tamanho_x(m)-1:
+                    print("|",end="")
+                elif coord[1]==0 or coord[1]==obter_tamanho_y(m)-1:
+                    print("-", end="")
+                else:
+                    print("@",end="")
             elif eh_posicao_livre(m,coord):
                 print(".", end="")
         print("")
     return
+
+#funcoes de alto nivel
+
+def obter_valor_numerico(m,p):
+    l,c = obter_pos_y(p),obter_pos_x(p)
+    Ncol = obter_tamanho_x(m)
+    return l*Ncol + c
+
+def obter_movimento(m,p):
+    animal = obter_animal(m,p)
+    adjancentes = obter_posicoes_adjacentes(p)
+    if eh_presa(animal):
+        for pos in adjancentes:
+            if eh_posicao_livre(m,pos):
+                return pos
+        return p
+    if eh_predador(animal):
+        for pos in adjancentes:
+            if eh_posicao_animal(m,pos):
+                return pos
+        for pos in adjancentes:
+            if eh_posicao_livre(m,pos):
+                return pos
+        return p
 
 dim = cria_posicao(11, 4)
 obs = (cria_posicao(4,2), cria_posicao(5,2))
@@ -299,4 +365,11 @@ an1 = tuple(cria_animal("rabbit", 5, 0) for i in range(3))
 an2 = (cria_animal("lynx", 20, 15),)
 pos = tuple(cria_posicao(p[0],p[1]) for p in ((5,1),(7,2),(10,1),(6,1)))
 prado = cria_prado(dim, obs, an1+an2, pos)
+p1 = cria_posicao(7,2)
+p2 = cria_posicao(9,3)
+prado = mover_animal(prado, p1, p2)
 prado_para_str(prado)
+
+print(posicao_para_str(obter_movimento(prado,cria_posicao(5,1))))
+print(posicao_para_str(obter_movimento(prado,cria_posicao(6,1))))
+print(posicao_para_str(obter_movimento(prado,cria_posicao(10,1))))
