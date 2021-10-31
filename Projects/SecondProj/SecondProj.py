@@ -52,11 +52,11 @@ def ordenar_posicoes(t):
     lista = list(t)
     for i in range(len(lista)-1):
         for j in range(0,len(lista)-i-1):
-            if lista[j][0] > lista[j+1][0] and lista[j][1]==lista[j][1]:
+            if lista[j][1] > lista[j+1][1]:
                 lista[j], lista[j+1] = lista[j+1],lista[j]
     for i in range(len(lista)-1):
         for j in range(0,len(lista)-i-1):
-            if lista[j][1] > lista[j+1][1] and lista[j][0]==lista[j][0]:
+            if lista[j][1]==lista[j+1][1] and lista[j][0]>lista[j+1][0]:
                 lista[j], lista[j+1] = lista[j+1],lista[j]
     return tuple(lista)
 
@@ -95,6 +95,7 @@ def aumenta_idade(a):
 
 def reset_idade(a):
     a["idade"]=0
+    return a
 
 def aumenta_fome(a):
     if a["tipo"] == "predador":
@@ -154,14 +155,14 @@ def eh_animal_fertil(a):
 
 def eh_animal_faminto(a):
     if eh_predador(a):
-        return a["fome"] >= a["alimentação"]
+        return a["fome"] >= a["alimentacao"]
     return False
 
 def reproduz_animal(a):
     novo = cria_copia_animal(a)
-    reset_idade(novo)
-    reset_fome(novo)
-    reset_idade(a)
+    novo = reset_idade(novo)
+    novo = reset_fome(novo)
+    a = reset_idade(a)
     return novo
 
 def cria_prado(d,r,a,p):
@@ -216,13 +217,13 @@ def obter_animal(m,p):
 def eliminar_animal(m,p): #(not working?)
     tup_pos = ()
     tup_anim = ()
-    index = m["pos_anim"].index(p)
+    animal = obter_animal(m,p)
     for pos in m["pos_anim"]:
         if pos != p:
             tup_pos += (pos,)
-    for i in range(len(m["animais"])):
-        if i != index:
-            tup_anim += (m["animais"][i],)
+    for animais in m["animais"]:
+        if animais != animal:
+            tup_anim += (animais,)
     m["pos_anim"] = tup_pos
     m["animais"] = tup_anim
     return m
@@ -326,7 +327,6 @@ def obter_movimento(m,p):
     def remover_adj_ocupados(m,p):
         tup = ()
         adjacentes = obter_posicoes_adjacentes(p)
-        print(adjacentes)
         for pos in adjacentes:
             if eh_posicao_livre(m,pos):
                 tup += (pos,)
@@ -335,38 +335,41 @@ def obter_movimento(m,p):
     esp_possiveis = 0
     animal = obter_animal(m,p)
     adjacentes = remover_adj_ocupados(m,p)
-    print(adjacentes)
     if eh_presa(animal):
         for i in range(len(adjacentes)):
             if eh_posicao_livre(m,adjacentes[i]):
                 esp_possiveis+=1
         if esp_possiveis != 0:
-            N = obter_valor_numerico(m,adjacentes[i]) + 1
+            N = obter_valor_numerico(m,p)
             return adjacentes[N%esp_possiveis]
         return p
     if eh_predador(animal):
         for j in range(len(adjacentes)):
             if eh_posicao_animal(m,adjacentes[j]):
-                return adjacentes[j]
+                a = obter_animal(m,adjacentes[j])
+                if eh_presa(a):
+                    return adjacentes[j]
         for k in range(len(adjacentes)):
             if eh_posicao_livre(m,adjacentes[k]):
                 esp_possiveis+=1
         if esp_possiveis!=0:
-            N=obter_valor_numerico(m,adjacentes[k]) + 1
+            N=obter_valor_numerico(m,p)
             return adjacentes[N%esp_possiveis]
         return p
 
 def geracao(m):
-    pos_anim = obter_posicao_animais(m)
-    for pos in pos_anim:
-        animal = obter_animal(m,pos)
+    pos = obter_posicao_animais(m)
+    for i in range(len(pos)):
+        animal = obter_animal(m,pos[i])
         animal = aumenta_idade(animal)
-        if obter_idade(animal) == obter_freq_reproducao(animal):
-            bebe = reproduz_animal(animal)
-            m = inserir_animal(m,bebe,pos)
-        if eh_predador(animal):
-            animal = aumenta_fome(animal)
-        m = mover_animal(m,pos,obter_movimento(m,pos))
+        animal = aumenta_fome(animal)
+        if eh_animal_faminto(animal):
+            m = eliminar_animal(m,pos[i])
+        else:
+            m = mover_animal(m,pos[i],obter_movimento(m,pos[i]))
+            if eh_animal_fertil(animal): #condicao para caso nao se mexa nao se reproduza
+                bebe = reproduz_animal(animal)
+                m = inserir_animal(m,bebe,pos[i])
     return m
 
 dim = cria_posicao(11, 4)
@@ -378,4 +381,5 @@ for p in ((2,2),(4,3),(10,2),(3,2)))
 prado = cria_prado(dim, obs, an1+an2, pos)
 print(prado_para_str(prado))
 print(prado_para_str(geracao(prado)))
-print(obter_valor_numerico(prado,cria_posicao(9,3)))
+print(prado_para_str(geracao(prado)))
+print(prado_para_str(geracao(prado)))
