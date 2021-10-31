@@ -93,6 +93,10 @@ def aumenta_idade(a):
     a["idade"]+=1
     return a
 
+def diminui_idade(a):
+    a["idade"]-=1
+    return a
+
 def reset_idade(a):
     a["idade"]=0
     return a
@@ -101,6 +105,7 @@ def aumenta_fome(a):
     if a["tipo"] == "predador":
         a["fome"]+=1
     return a
+    
 
 def reset_fome(a):
     if a["tipo"] == "predador":
@@ -214,7 +219,7 @@ def obter_animal(m,p):
 
 #Modificadores
 
-def eliminar_animal(m,p): #(not working?)
+def eliminar_animal(m,p):
     tup_pos = ()
     tup_anim = ()
     animal = obter_animal(m,p)
@@ -366,20 +371,94 @@ def geracao(m):
         if eh_animal_faminto(animal):
             m = eliminar_animal(m,pos[i])
         else:
-            m = mover_animal(m,pos[i],obter_movimento(m,pos[i]))
-            if eh_animal_fertil(animal): #condicao para caso nao se mexa nao se reproduza
-                bebe = reproduz_animal(animal)
-                m = inserir_animal(m,bebe,pos[i])
+            novo_pos = obter_movimento(m,pos[i])
+            if novo_pos != pos[i]:
+                m = mover_animal(m,pos[i],novo_pos)
+                if eh_animal_fertil(animal): #condicao para caso nao se mexa nao se reproduza
+                    bebe = reproduz_animal(animal)
+                    m = inserir_animal(m,bebe,pos[i])
+            else:
+                if eh_animal_fertil(animal):
+                    animal = diminui_idade(animal)
     return m
 
-dim = cria_posicao(11, 4)
-obs = (cria_posicao(4,2), cria_posicao(5,2))
-an1 = tuple(cria_animal("sheep", 2, 0) for i in range(3))
-an2 = (cria_animal("wolf", 10, 3),)
-pos = tuple(cria_posicao(p[0],p[1]) \
-for p in ((2,2),(4,3),(10,2),(3,2)))
-prado = cria_prado(dim, obs, an1+an2, pos)
-print(prado_para_str(prado))
-print(prado_para_str(geracao(prado)))
-print(prado_para_str(geracao(prado)))
-print(prado_para_str(geracao(prado)))
+def simula_ecossistema(f,g,v):
+    
+    def ler_ficheiro(f,g,v):
+        file = open(f,"r")
+        nome = []
+        pos = []
+        p = []
+        rochedo = []
+        size = file.readline()
+        size = size[1:-2].split(", ")
+        size = [int(size[0]),int(size[1])]
+        rochedos = file.readline()
+        rochedos = rochedos[1:-2].split(", ")
+        for i in range(0,len(rochedos),2):
+            rochedo += [[int(rochedos[i][1:]),int(rochedos[i+1][:-1])],]
+        animais = file.readlines()
+        for j in range(len(animais)):
+            if j != len(animais)-1:
+                animais[j] = animais[j][1:-2]
+            else:
+                animais[j] = animais[j][1:-1]
+            nome += [animais[j].split(", ")[:3]]
+            pos += [animais[j].split(", ")[3:]]
+        for i in range(len(nome)):
+            nome[i][0] = (nome[i][0].replace('"',''))
+            nome[i][1],nome[i][2] = int(nome[i][1]),int(nome[i][2])
+        for coord in pos:
+            coord[0] = int(coord[0].replace("(",""))
+            coord[1] = int(coord[1].replace(")",""))
+        file.close()
+        return size,rochedo,nome,tuple(pos)
+    
+    def prints(f,g,v,prado):
+        pra = prado
+        if v:
+            for i in range(g):
+                if i != 0:
+                    pra = geracao(pra)
+                    if num_presas != obter_numero_presas(pra) or num_predadores != \
+                        obter_numero_predadores(pra):
+                        print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
+                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(i) +")")
+                        print(prado_para_str(pra))
+                else:
+                    print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
+                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(i) +")")
+                    print(prado_para_str(pra))
+                num_presas = obter_numero_presas(pra)
+                num_predadores = obter_numero_predadores(pra)
+        else:
+            for i in range(g):
+                if i==0:
+                    print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
+                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(i) +")")
+                    print(prado_para_str(pra))
+                elif i==g-1:
+                    print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
+                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(g) +")")
+                    print(prado_para_str(pra))
+                else:
+                    pra = geracao(pra)
+        return (obter_numero_predadores(pra),obter_numero_presas(pra))
+    
+    size,rochedos,nome,pos = ler_ficheiro(f,g,v)
+    dim = cria_posicao(size[0],size[1])
+    obs = ()
+    po = ()
+    animal = ()
+    for coord in rochedos:
+        obs += (cria_posicao(coord[0],coord[1]),)
+    for a in nome:
+        animal += (cria_animal(a[0],a[1],a[2]),)
+    for coord in pos:
+        po += (cria_posicao(coord[0],coord[1]),)
+    prado = cria_prado(dim,obs,animal,po)
+    num_presas_predadores = prints(f,g,v,prado)
+
+    return num_presas_predadores
+
+print(simula_ecossistema("config.txt",200,True))
