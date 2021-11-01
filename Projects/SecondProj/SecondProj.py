@@ -64,10 +64,10 @@ def cria_animal(s,r,a):
         if len(s)>0 and r>0 and a>=0:
             if a>0:
                 return {"especie":s,"idade":0,"reproducao":r,\
-                    "alimentacao":a,"tipo":"predador","fome":0}
+                    "alimentacao":a,"tipo":"predador","fome":0,"move":False}
             else:
                 return {"especie":s,"idade":0,"reproducao":r,\
-                    "alimentacao":a,"tipo":"presa","fome":0}
+                    "alimentacao":a,"tipo":"presa","fome":0,"move":False}
     raise ValueError("cria_animal: argumentos invalidos")
 def cria_copia_animal(a):
     s = a["especie"]
@@ -89,12 +89,14 @@ def obter_idade(a):
     return a["idade"]
 def obter_fome(a):
     return a["fome"]
+def obter_movimento(a):
+    return a["move"]
 
 #Modificadores
 def aumenta_idade(a):
     a["idade"]+=1
     return a
-def diminui_idade(a):#REVER
+def diminui_idade(a):
     a["idade"]-=1
     return a
 def reset_idade(a):
@@ -108,7 +110,6 @@ def reset_fome(a):
     if a["tipo"] == "predador":
         a["fome"] = 0
     return a
-
 #Reconhecedor
 def eh_animal(arg):
     if type(arg) == dict:
@@ -206,10 +207,15 @@ def obter_animal(m,p):
 def eliminar_animal(m,p): #talvez tenha de mudar
     tup_pos = ()
     tup_anim = ()
+    i=0
     animal = obter_animal(m,p)
     for pos in m["pos_anim"]:
         if pos != p:
             tup_pos += (pos,)
+        else:
+            if i == 1:
+                tup_pos += (pos,)
+            i=1
     for animais in m["animais"]:
         if animais != animal:
             tup_anim += (animais,)
@@ -229,6 +235,9 @@ def inserir_animal(m,a,p):
     m["animais"] += (a,)
     m["pos_anim"] += (p,)
     return m
+def reset_moves(m):
+    for animais in m["animais"]:
+        animais["move"]=False
 
 #Reconhecedores
 
@@ -302,7 +311,6 @@ def obter_valor_numerico(m,p):
     l,c = obter_pos_y(p),obter_pos_x(p)
     Ncol = obter_tamanho_x(m)
     return l*Ncol + c
-
 def obter_movimento(m,p):
     adjacentes = obter_posicoes_adjacentes(p)
     animal = obter_animal(m,p)
@@ -329,8 +337,6 @@ def obter_movimento(m,p):
 
 #Funcoes a parte
 def geracao(m):
-    for animais in m["animais"]:
-        print(animais)
     pos = obter_posicao_animais(m)
     for i in range(len(pos)):
         animal = obter_animal(m,pos[i])
@@ -348,6 +354,20 @@ def geracao(m):
             else:
                 if eh_animal_fertil(animal):
                     animal = diminui_idade(animal)
+    pos = obter_posicao_animais(m) #problema: como interage com os movimentos antigos, varios animais tao a ir para o mesmo sitio portanto, temos de criar um valor no dicionario dos animais de true or false para registar se ja fez o movimento
+    j,k = 0,0
+    while j<len(pos):
+        k=0
+        while k<len(pos):
+            if k!=j:
+                if posicoes_iguais(pos[j],pos[k]):
+                    if(eh_presa(obter_animal(m,pos[k]))):
+                        m = eliminar_animal(m,pos[k])
+                        animal = obter_animal(m,pos[k])
+                        if eh_predador(animal):
+                            animal = reset_fome(animal)
+            k += 1
+        j += 1
     return m
 def simula_ecossistema(f,g,v):
     
