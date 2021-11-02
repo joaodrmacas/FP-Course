@@ -110,12 +110,16 @@ def reset_fome(a):
     if a["tipo"] == "predador":
         a["fome"] = 0
     return a
+def move(a):
+    a["move"] = True
+    return a
+
 #Reconhecedor
 def eh_animal(arg):
     if type(arg) == dict:
         if "especie" in arg and "idade" in arg and "reproducao" in arg and \
             "alimentacao" in arg and "tipo" in arg and "fome" in arg and\
-                len(arg) == 6:
+                "move" in arg and len(arg) == 7:
                 if type(arg["especie"]) == str and type(arg["idade"])==int and\
                     type(arg["reproducao"]) == int and type(arg["alimentacao"])\
                         ==int and type(arg["tipo"])==str and type(arg["fome"])==int:
@@ -125,7 +129,8 @@ def eh_predador(arg):
     return arg["tipo"]=="predador"
 def eh_presa(arg):
     return arg["tipo"]=="presa"
-
+def ja_moveu(arg):
+    return arg["move"]
 #Teste
 def animais_iguais(a1,a2):
     return eh_animal(a1) and eh_animal(a2) and a1 == a2
@@ -238,6 +243,7 @@ def inserir_animal(m,a,p):
 def reset_moves(m):
     for animais in m["animais"]:
         animais["move"]=False
+    return m
 
 #Reconhecedores
 
@@ -336,46 +342,88 @@ def obter_movimento(m,p):
     return p
 
 #Funcoes a parte
+# def geracao(m):
+#     pos = obter_posicao_animais(m)
+#     i=0
+#     while i<(len(pos)):
+#         animal = obter_animal(m,pos[i])
+#         if not ja_moveu(animal):
+#             animal = aumenta_idade(animal)
+#             animal = aumenta_fome(animal)
+#             if eh_animal_faminto(animal):
+#                 m = eliminar_animal(m,pos[i])
+#             else:
+#                 novo_pos = obter_movimento(m,pos[i])
+#                 if novo_pos != pos[i]:
+#                     m = mover_animal(m,pos[i],novo_pos)
+#                     if eh_animal_fertil(animal): #condicao para caso nao se mexa se nao se reproduzir
+#                         bebe = reproduz_animal(animal)
+#                         m = inserir_animal(m,bebe,pos[i])
+#                 else:
+#                     if eh_animal_fertil(animal):
+#                         animal = diminui_idade(animal)
+#             animal = move(animal)
+#         pos = obter_posicao_animais(m)
+#         i+=1
+#     m = reset_moves(m)
+#     pos = obter_posicao_animais(m) #problema: como interage com os movimentos antigos, varios animais tao a ir para o mesmo sitio portanto, temos de criar um valor no dicionario dos animais de true or false para registar se ja fez o movimento
+#     j,k = 0,0
+#     while j<len(pos):
+#         k=0
+#         while k<len(pos):
+#             if k!=j:
+#                 if posicoes_iguais(pos[j],pos[k]):
+#                     if(eh_presa(obter_animal(m,pos[k]))):
+#                         m = eliminar_animal(m,pos[k])
+#                         animal = obter_animal(m,pos[k])
+#                         if eh_predador(animal):
+#                             animal = reset_fome(animal)
+#             k += 1
+#         j += 1
+#     return m
+
 def geracao(m):
-    pos = obter_posicao_animais(m)
-    for i in range(len(pos)):
-        animal = obter_animal(m,pos[i])
-        animal = aumenta_idade(animal)
-        animal = aumenta_fome(animal)
-        if eh_animal_faminto(animal):
-            m = eliminar_animal(m,pos[i])
-        else:
-            novo_pos = obter_movimento(m,pos[i])
-            if novo_pos != pos[i]:
-                m = mover_animal(m,pos[i],novo_pos)
-                if eh_animal_fertil(animal): #condicao para caso nao se mexa se nao se reproduzir
-                    bebe = reproduz_animal(animal)
-                    m = inserir_animal(m,bebe,pos[i])
+    posicoes = obter_posicao_animais(m)
+    for pos in posicoes:
+        animal = obter_animal(m,pos)
+        if not ja_moveu(animal):
+            animal = aumenta_idade(animal)
+            animal = aumenta_fome(animal)
+            if eh_animal_faminto(animal):
+                m = eliminar_animal(m,pos)
             else:
-                if eh_animal_fertil(animal):
-                    animal = diminui_idade(animal)
-    pos = obter_posicao_animais(m) #problema: como interage com os movimentos antigos, varios animais tao a ir para o mesmo sitio portanto, temos de criar um valor no dicionario dos animais de true or false para registar se ja fez o movimento
-    j,k = 0,0
-    while j<len(pos):
-        k=0
-        while k<len(pos):
-            if k!=j:
-                if posicoes_iguais(pos[j],pos[k]):
-                    if(eh_presa(obter_animal(m,pos[k]))):
-                        m = eliminar_animal(m,pos[k])
-                        animal = obter_animal(m,pos[k])
-                        if eh_predador(animal):
-                            animal = reset_fome(animal)
-            k += 1
-        j += 1
+                nova_pos = obter_movimento(m,pos)
+                if nova_pos != pos:
+                    m = mover_animal(m,pos,nova_pos)
+                    animal = move(animal)
+                    if eh_animal_fertil(animal):
+                        bebe = reproduz_animal(animal)
+                        m = inserir_animal(m,bebe,pos)
+                else:
+                    if eh_animal_fertil(animal):
+                        animal=diminui_idade(animal)
+        posicoes = obter_posicao_animais(m)
+        j,k = 0,0
+        while j<len(posicoes):
+            k=0
+            while k<len(posicoes):
+                if k!=j:
+                    if posicoes_iguais(posicoes[j],posicoes[k]):
+                        if(eh_presa(obter_animal(m,posicoes[k]))):
+                            m = eliminar_animal(m,posicoes[k])
+                            animal = obter_animal(m,posicoes[k])
+                            if eh_predador(animal):
+                                animal = reset_fome(animal)
+                k += 1
+            j += 1
+    m=reset_moves(m)
     return m
 def simula_ecossistema(f,g,v):
     
-    def ler_ficheiro(f,g,v):
+    def ler_ficheiro(f):
         file = open(f,"r")
         nome = []
         pos = []
-        p = []
         rochedo = []
         size = file.readline()
         size = size[1:-2].split(", ")
@@ -401,7 +449,7 @@ def simula_ecossistema(f,g,v):
         file.close()
         return size,rochedo,nome,tuple(pos)
     
-    def prints(f,g,v,prado):
+    def prints(g,v,prado):
         pra = prado
         if v:
             for i in range(g):
@@ -432,7 +480,7 @@ def simula_ecossistema(f,g,v):
                     pra = geracao(pra)
         return (obter_numero_predadores(pra),obter_numero_presas(pra))
     
-    size,rochedos,nome,pos = ler_ficheiro(f,g,v)
+    size,rochedos,nome,pos = ler_ficheiro(f)
     dim = cria_posicao(size[0],size[1])
     obs = ()
     po = ()
@@ -444,7 +492,7 @@ def simula_ecossistema(f,g,v):
     for coord in pos:
         po += (cria_posicao(coord[0],coord[1]),)
     prado = cria_prado(dim,obs,animal,po)
-    num_presas_predadores = prints(f,g,v,prado)
+    num_presas_predadores = prints(g,v,prado)
 
     return num_presas_predadores
 
