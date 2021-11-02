@@ -23,7 +23,7 @@ def eh_posicao(arg):
     return type(arg) == list and len(arg)==2 and arg[0]>=0 and arg[1]>= 0
 
 #Teste
-def posicoes_iguais(p1,p2): #usar isto para quando 2 animais se comerem
+def posicoes_iguais(p1,p2):
     return eh_posicao(p1) and eh_posicao(p2) and p1 == p2
 
 #Transformador
@@ -122,7 +122,8 @@ def eh_animal(arg):
                 "move" in arg and len(arg) == 7:
                 if type(arg["especie"]) == str and type(arg["idade"])==int and\
                     type(arg["reproducao"]) == int and type(arg["alimentacao"])\
-                        ==int and type(arg["tipo"])==str and type(arg["fome"])==int:
+                        ==int and type(arg["tipo"])==str and \
+                            type(arg["fome"])==int:
                             return True
     return False
 def eh_predador(arg):
@@ -168,8 +169,9 @@ def reproduz_animal(a):
 #TAD PRADO
 #Construtores
 def cria_prado(d,r,a,p): # usar o eh_prado?
-    if type(d) == list and eh_posicao(d) and type(r) == tuple and type(a) == tuple\
-        and len(a) >= 1 and type(p) == tuple and len(p) == len(a):
+    if type(d) == list and eh_posicao(d) and type(r) == tuple and \
+        type(a) == tuple and len(a) >= 1 and type(p) == tuple and \
+            len(p) == len(a):
         for posicoes in r:
             if not eh_posicao(posicoes):
                 raise ValueError("cria_prado: argumentos invalidos")
@@ -249,10 +251,11 @@ def reset_moves(m):
 
 def eh_prado(arg): #preciso checkar se os tuplos sao inteiros/listas? 
     if type(arg) == dict:
-        if "pos" in arg and "rochedos" in arg and "animais" in arg and "pos_anim"\
-            in arg:
+        if "pos" in arg and "rochedos" in arg and "animais" in arg \
+            and "pos_anim" in arg:
             if type(arg["pos"]) == list and type(arg["rochedos"]) == tuple and\
-                type(arg["animais"] == tuple) and type(arg["pos_anim"]) == tuple:
+                type(arg["animais"] == tuple) and type(arg["pos_anim"]) == \
+                    tuple:
                 return True
     return False
 def eh_posicao_animal(m,p):
@@ -296,10 +299,11 @@ def prado_para_str(m):
                 animal = obter_animal(m,coord)
                 str += animal_para_char(animal)
             elif eh_posicao_obstaculo(m,coord):
-                if (coord[0]==0 and coord[1]==0) or (coord[0]==obter_tamanho_x(m)-1\
-                    and coord[1]==0) or (coord[0]==obter_tamanho_x(m)-1 and\
-                        coord[1]==obter_tamanho_y(m)-1) or (coord[0]==0 and\
-                            coord[1]==obter_tamanho_y(m)-1):
+                if (coord[0]==0 and coord[1]==0) or (coord[0]==\
+                    obter_tamanho_x(m)-1 and coord[1]==0) or (coord[0]==\
+                        obter_tamanho_x(m)-1 and coord[1]==\
+                            obter_tamanho_y(m)-1) or (coord[0]==0 and coord[1]\
+                                ==obter_tamanho_y(m)-1):
                             str += "+"
                 elif coord[0]==0 or coord[0]==obter_tamanho_x(m)-1:
                     str +="|"
@@ -324,7 +328,8 @@ def obter_movimento(m,p):
     N = obter_valor_numerico(m,p)
     if eh_predador(animal):
         for i in range(len(adjacentes)):
-            if eh_posicao_animal(m,adjacentes[i]) and eh_presa(obter_animal(m,adjacentes[i])):
+            if eh_posicao_animal(m,adjacentes[i]) and \
+                eh_presa(obter_animal(m,adjacentes[i])):
                 posicoes_presas += (adjacentes[i],)
         for j in range(len(adjacentes)):
             if eh_posicao_livre(m,adjacentes[j]):
@@ -342,45 +347,6 @@ def obter_movimento(m,p):
     return p
 
 #Funcoes a parte
-# def geracao(m):
-#     pos = obter_posicao_animais(m)
-#     i=0
-#     while i<(len(pos)):
-#         animal = obter_animal(m,pos[i])
-#         if not ja_moveu(animal):
-#             animal = aumenta_idade(animal)
-#             animal = aumenta_fome(animal)
-#             if eh_animal_faminto(animal):
-#                 m = eliminar_animal(m,pos[i])
-#             else:
-#                 novo_pos = obter_movimento(m,pos[i])
-#                 if novo_pos != pos[i]:
-#                     m = mover_animal(m,pos[i],novo_pos)
-#                     if eh_animal_fertil(animal): #condicao para caso nao se mexa se nao se reproduzir
-#                         bebe = reproduz_animal(animal)
-#                         m = inserir_animal(m,bebe,pos[i])
-#                 else:
-#                     if eh_animal_fertil(animal):
-#                         animal = diminui_idade(animal)
-#             animal = move(animal)
-#         pos = obter_posicao_animais(m)
-#         i+=1
-#     m = reset_moves(m)
-#     pos = obter_posicao_animais(m) #problema: como interage com os movimentos antigos, varios animais tao a ir para o mesmo sitio portanto, temos de criar um valor no dicionario dos animais de true or false para registar se ja fez o movimento
-#     j,k = 0,0
-#     while j<len(pos):
-#         k=0
-#         while k<len(pos):
-#             if k!=j:
-#                 if posicoes_iguais(pos[j],pos[k]):
-#                     if(eh_presa(obter_animal(m,pos[k]))):
-#                         m = eliminar_animal(m,pos[k])
-#                         animal = obter_animal(m,pos[k])
-#                         if eh_predador(animal):
-#                             animal = reset_fome(animal)
-#             k += 1
-#         j += 1
-#     return m
 
 def geracao(m):
     posicoes = obter_posicao_animais(m)
@@ -455,26 +421,30 @@ def simula_ecossistema(f,g,v):
             for i in range(g):
                 if i != 0:
                     pra = geracao(pra)
-                    if num_presas != obter_numero_presas(pra) or num_predadores != \
-                        obter_numero_predadores(pra):
-                        print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
-                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(i) +")")
+                    if num_presas != obter_numero_presas(pra) or num_predadores\
+                        != obter_numero_predadores(pra):
+                        print("Predadores: "+str(obter_numero_predadores(pra))+\
+                            " vs Presas: "+str(obter_numero_presas(pra))+\
+                                " (Gen. "+ str(i) +")")
                         print(prado_para_str(pra))
                 else:
-                    print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
-                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(i) +")")
+                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
+                        " vs Presas: "+ str(obter_numero_presas(pra))+\
+                            " (Gen. "+ str(i) +")")
                     print(prado_para_str(pra))
                 num_presas = obter_numero_presas(pra)
                 num_predadores = obter_numero_predadores(pra)
         else:
             for i in range(g):
                 if i==0:
-                    print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
-                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(i) +")")
+                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
+                        " vs Presas: " + str(obter_numero_presas(pra))+\
+                            " (Gen. "+ str(i) +")")
                     print(prado_para_str(pra))
                 elif i==g-1:
-                    print("Predadores: " + str(obter_numero_predadores(pra)) + " vs Presas: "\
-                            + str(obter_numero_presas(pra))+ " (Gen. "+ str(g) +")")
+                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
+                        " vs Presas: " + str(obter_numero_presas(pra))+ \
+                            " (Gen. "+ str(g) +")")
                     print(prado_para_str(pra))
                 else:
                     pra = geracao(pra)
@@ -495,5 +465,3 @@ def simula_ecossistema(f,g,v):
     num_presas_predadores = prints(g,v,prado)
 
     return num_presas_predadores
-
-print(simula_ecossistema("config.txt",20,True))
