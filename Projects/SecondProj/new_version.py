@@ -205,10 +205,6 @@ def eliminar_animal(m,p):#Tentar adicionar uma forma para as presas ficarem semp
     for pos in m["pos_anim"]:
         if pos != p:
             tup_pos += (pos,)
-        else:
-            if i == 1:
-                tup_pos += (pos,)
-            i=1
     for animais in m["animais"]:
         if not eh_eliminado(animais):
             tup_anim += (animais,)
@@ -328,35 +324,110 @@ def geracao(m):
     for pos in posicoes:
         animal = obter_animal(m,pos)
         if not ja_moveu(animal):
-            animal = aumenta_idade(animal)
-            animal = aumenta_fome(animal)
-            if eh_animal_faminto(animal):
-                m = eliminar_animal(m,pos)
-            else:
-                nova_pos = obter_movimento(m,pos)
-                if nova_pos != pos:
+            aumenta_idade(animal)
+            aumenta_fome(animal)
+            nova_pos = obter_movimento(m,pos)
+            if nova_pos != pos:
+                if eh_predador(animal) and eh_posicao_animal(m,nova_pos) and \
+                    eh_presa(obter_animal(m,nova_pos)):
+                    reset_fome(animal)
+                    eliminar_animal(m,nova_pos)
                     m = mover_animal(m,pos,nova_pos)
-                    animal = move(animal)
-                    if eh_animal_fertil(animal):
-                        bebe = reproduz_animal(animal)
-                        m = inserir_animal(m,bebe,pos)
+                    move(animal)
                 else:
-                    if eh_animal_fertil(animal):
-                        animal=diminui_idade(animal)
+                    if eh_animal_faminto(animal):
+                        m = eliminar_animal(m,pos)
+                    else:
+                        m = mover_animal(m,pos,nova_pos)
+                        move(animal)
+                if eh_animal_fertil(animal):
+                    bebe = reproduz_animal(animal)
+                    m = inserir_animal(m,bebe,pos)
+            else:
+                if eh_animal_fertil(animal):
+                    diminui_idade(animal)
         posicoes = obter_posicao_animais(m)
-        j,k = 0,0
-        while j<len(posicoes):
-            k=0
-            while k<len(posicoes):
-                if k!=j:
-                    if posicoes_iguais(posicoes[j],posicoes[k]):
-                        if(eh_presa(obter_animal(m,posicoes[k]))):
-                            m = eliminar_animal(m,posicoes[k])
-                            animal = obter_animal(m,posicoes[k])
-                            if eh_predador(animal):
-                                animal = reset_fome(animal)
-                k += 1
-            j += 1
+    return reset_moves(m)
+def simula_ecossistema(f,g,v):
+    
+    def ler_ficheiro(f):
+        file = open(f,"r")
+        nome = []
+        pos = []
+        rochedo = []
+        size = file.readline()
+        size = size[1:-2].split(", ")
+        size = [int(size[0]),int(size[1])]
+        rochedos = file.readline()
+        rochedos = rochedos[1:-2].split(", ")
+        for i in range(0,len(rochedos),2):
+            rochedo += [[int(rochedos[i][1:]),int(rochedos[i+1][:-1])],]
+        animais = file.readlines()
+        for j in range(len(animais)):
+            if j != len(animais)-1:
+                animais[j] = animais[j][1:-2]
+            else:
+                animais[j] = animais[j][1:-1]
+            nome += [animais[j].split(", ")[:3]]
+            pos += [animais[j].split(", ")[3:]]
+        for i in range(len(nome)):
+            nome[i][0] = (nome[i][0].replace('"',''))
+            nome[i][1],nome[i][2] = int(nome[i][1]),int(nome[i][2])
+        for coord in pos:
+            coord[0] = int(coord[0].replace("(",""))
+            coord[1] = int(coord[1].replace(")",""))
+        file.close()
+        return size,rochedo,nome,tuple(pos)
+    
+    def prints(g,v,prado):
+        pra = prado
+        if v:
+            for i in range(g):
+                if i != 0:
+                    pra = geracao(pra)
+                    if num_presas != obter_numero_presas(pra) or num_predadores\
+                       != obter_numero_predadores(pra):
+                        print("Predadores: "+str(obter_numero_predadores(pra))+\
+                        " vs Presas: "+str(obter_numero_presas(pra))+\
+                            " (Gen. "+ str(i) +")")
+                        print(prado_para_str(pra))
+                else:
+                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
+                        " vs Presas: "+ str(obter_numero_presas(pra))+\
+                            " (Gen. "+ str(i) +")")
+                    print(prado_para_str(pra))
+                num_presas = obter_numero_presas(pra)
+                num_predadores = obter_numero_predadores(pra)
+        else:
+            for i in range(g):
+                if i==0:
+                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
+                        " vs Presas: " + str(obter_numero_presas(pra))+\
+                            " (Gen. "+ str(i) +")")
+                    print(prado_para_str(pra))
+                elif i==g-1:
+                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
+                        " vs Presas: " + str(obter_numero_presas(pra))+ \
+                            " (Gen. "+ str(g) +")")
+                    print(prado_para_str(pra))
+                else:
+                    pra = geracao(pra)
+        return (obter_numero_predadores(pra),obter_numero_presas(pra))
+    
+    size,rochedos,nome,pos = ler_ficheiro(f)
+    dim = cria_posicao(size[0],size[1])
+    obs = ()
+    po = ()
+    animal = ()
+    for coord in rochedos:
+        obs += (cria_posicao(coord[0],coord[1]),)
+    for a in nome:
+        animal += (cria_animal(a[0],a[1],a[2]),)
+    for coord in pos:
+        po += (cria_posicao(coord[0],coord[1]),)
+    prado = cria_prado(dim,obs,animal,po)
+    num_presas_predadores = prints(g,v,prado)
 
-    m=reset_moves(m)
-    return m
+    return num_presas_predadores
+
+print(simula_ecossistema("config.txt",200,True))
