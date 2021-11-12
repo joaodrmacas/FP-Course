@@ -210,6 +210,7 @@ def eliminar_animal(m,p):#Tentar adicionar uma forma para as presas ficarem semp
             tup_anim += (animais,)
     m["pos_anim"] = tup_pos
     m["animais"] = tup_anim
+    return m
 def mover_animal(m,p1,p2):
     tup = ()
     for pos in m["pos_anim"]:
@@ -260,8 +261,8 @@ def eh_posicao_livre(m,p):
     if not eh_posicao_animal(m,p) and not eh_posicao_obstaculo(m,p):
         return True
     return False
-# def prados_iguais(p1,p2):
-#     return eh_prado(p1) and eh_prado(p2) and p1 == p2
+def prados_iguais(p1,p2):
+    return eh_prado(p1) and eh_prado(p2) and p1 == p2
 def prado_para_str(m):
     str = ""
     for j in range(obter_tamanho_y(m)):
@@ -324,28 +325,30 @@ def geracao(m):
     for pos in posicoes:
         animal = obter_animal(m,pos)
         if not ja_moveu(animal):
-            aumenta_idade(animal)
-            aumenta_fome(animal)
+            animal = aumenta_idade(animal)
+            animal = aumenta_fome(animal)
             nova_pos = obter_movimento(m,pos)
             if nova_pos != pos:
                 if eh_predador(animal) and eh_posicao_animal(m,nova_pos) and \
                     eh_presa(obter_animal(m,nova_pos)):
-                    reset_fome(animal)
-                    eliminar_animal(m,nova_pos)
+                    animal = reset_fome(animal)
+                    animal = eliminar(obter_animal(m,nova_pos))
+                    m = eliminar_animal(m,nova_pos)
                     m = mover_animal(m,pos,nova_pos)
-                    move(animal)
+                    animal = move(animal)
                 else:
                     if eh_animal_faminto(animal):
+                        animal = eliminar(animal)
                         m = eliminar_animal(m,pos)
                     else:
                         m = mover_animal(m,pos,nova_pos)
-                        move(animal)
+                        animal = move(animal)
                 if eh_animal_fertil(animal):
                     bebe = reproduz_animal(animal)
                     m = inserir_animal(m,bebe,pos)
             else:
                 if eh_animal_fertil(animal):
-                    diminui_idade(animal)
+                    animal = diminui_idade(animal)
         posicoes = obter_posicao_animais(m)
     return reset_moves(m)
 def simula_ecossistema(f,g,v):
@@ -430,4 +433,4 @@ def simula_ecossistema(f,g,v):
 
     return num_presas_predadores
 
-print(simula_ecossistema("config.txt",200,True))
+print(simula_ecossistema("config.txt",200,False))

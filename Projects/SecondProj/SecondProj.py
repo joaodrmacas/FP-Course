@@ -473,5 +473,3 @@ def simula_ecossistema(f,g,v):
     num_presas_predadores = prints(g,v,prado)
 
     return num_presas_predadores
-
-print(simula_ecossistema("config.txt",200,True))
