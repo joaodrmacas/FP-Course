@@ -181,10 +181,10 @@ def reproduz_animal(a):
     a = reset_idade(a)
     return novo
 
-#TAD Prado
+#TAD PRADO
 #Construtores
 def cria_prado(d,r,a,p):
-    prado = {"pos":d, "rochedos":r, "animais":a,"pos_anim":p}
+    prado = [d,r,a,p]
     if eh_prado(prado):
         return prado
     raise ValueError("cria_prado: argumentos invalidos")
@@ -195,90 +195,90 @@ def cria_copia_prado(m):
 
 #Seletores
 def ver_index(m,p):
-    for i in range(len(m["pos_anim"])):
-        if m["pos_anim"][i]==p:
+    for i in range(len(m[3])):
+        if m[3][i]==p:
             return i
 def obter_tamanho_x(m):
-    return obter_pos_x(m["pos"]) + 1
+    return obter_pos_x(m[0])+1
 def obter_tamanho_y(m):
-    return obter_pos_y(m["pos"]) + 1
+    return obter_pos_y(m[0])+1
 def obter_numero_predadores(m):
-    num = 0
-    for animais in m["animais"]:
+    n = 0
+    for animais in m[2]:
         if eh_predador(animais):
-            num += 1
-    return num
-def obter_numero_presas(m):
-    num = 0
-    for animais in m["animais"]:
+            n += 1
+    return n
+def obter_numero_predadores(m):
+    n = 0
+    for animais in m[2]:
         if eh_presa(animais):
-            num += 1
-    return num
+            n += 1
+    return n
 def obter_posicao_animais(m):
-    return ordenar_posicoes(m["pos_anim"])
+    return ordenar_posicoes(m[3])
 def obter_animal(m,p):
     index = ver_index(m,p)
-    return m["animais"][index]
+    return m[2][index]
 
 #Modificadores
 def eliminar_animal(m,p):
     tup_anim = ()
     tup_pos = ()
-    for i in range(len(m["pos_anim"])):
-        if m["pos_anim"][i] != p:
-            tup_pos += (m["pos_anim"][i],)
+    for i in range(len(m[3])):
+        if m[3][i] != p:
+            tup_pos += (m[3][i],)
         else:
-            index = ver_index(m,p)
-    for j in range(len(m["animais"])):
-        if not eh_eliminado(m["animais"][j]) and j!=index:
-            tup_anim += (m["animais"][j],)
-    m["pos_anim"] = tup_pos
-    m["animais"] = tup_anim
+            index=ver_index(m,p)
+    for j in range(len(m[2])):
+        if not eh_eliminado(m[2][j]) and j!=index:
+            tup_anim += (m[2][j],)
+    m[3] = tup_pos
+    m[2] = tup_anim
     return m
 def mover_animal(m,p1,p2):
     tup = ()
-    for pos in m["pos_anim"]:
+    for pos in m[3]:
         if pos != p1:
             tup += (pos,)
         else:
             tup += (p2,)
-    m["pos_anim"] = tup
+    m[3] = tup
     return m
 def inserir_animal(m,a,p):
-    m["animais"] += (a,)
-    m["pos_anim"] += (p,)
+    m[2] += (a,)
+    m[3] += (p,)
     return m
-def reset_move_prado(m):
-    for animais in m["animais"]:
+def reset_moves(m):
+    for animais in m[2]:
         animais = reset_move(animais)
     return m
 
 #Reconhecedores
 def eh_prado(arg):
-    if type(arg)==dict and len(arg)==4 and eh_posicao(arg["pos"]) and type\
-        (arg["rochedos"])==tuple and len(arg["rochedos"])>=0 and type(arg\
-            ["animais"])==tuple and len(arg["animais"])>=1 and type(arg\
-                ["pos_anim"])==tuple and len(arg["pos_anim"])==len(arg\
-                    ["animais"]):
-                for posicoes in arg["rochedos"]:
+    if type(arg)==list and len(arg)==4 and eh_posicao(arg[0]) and type\
+        (arg[1])==tuple and len(arg[1])>=0 and type(arg\
+            [2])==tuple and len(arg[2])>=1 and type(arg\
+                [3])==tuple and len(arg[3])==len(arg\
+                    [2]):
+                for posicoes in arg[1]:
                     if not eh_posicao(posicoes):
                         return False
-                    if obter_pos_x(posicoes)>=obter_pos_x(arg["pos"]) or \
-                        obter_pos_y(posicoes)>=obter_pos_y(arg["pos"]):
+                    if obter_pos_x(posicoes)>=obter_pos_x(arg[0]) or \
+                        obter_pos_y(posicoes)>=obter_pos_y(arg[0]):
                         return False
-                for animal in arg["animais"]:
+                for animal in arg[2]:
                     if not eh_animal(animal):
                         return False
-                for posicao in arg["pos_anim"]:
+                for posicao in arg[3]:
                     if not eh_posicao(posicao):
                         return False
-                    if obter_pos_x(posicao)>=obter_pos_x(arg["pos"]) or \
-                        obter_pos_y(posicao)>=obter_pos_y(arg["pos"]):
+                    if obter_pos_x(posicao)>=obter_pos_x(arg[0]) or \
+                        obter_pos_y(posicao)>=obter_pos_y(arg[0]):
                         return False
                 return True
     return False
 def eh_posicao_animal(m,p):
-    for pos in m["pos_anim"]:
+    for pos in m[3]:
         if pos == p:
             return True
     return False
@@ -299,7 +299,7 @@ def eh_posicao_obstaculo(m,p):
 
     if eh_montanha(m,p):
         return True
-    for pos in m["rochedos"]:
+    for pos in m[1]:
         if pos == p:
             return True
     return False
@@ -318,7 +318,7 @@ def prado_para_str(m):
                 animal = obter_animal(m,coord)
                 str += animal_para_char(animal)
             elif eh_posicao_obstaculo(m,coord):
-                if (coord==0 and coord[1]==0) or (coord[0]==\
+                if (coord[0]==0 and coord[1]==0) or (coord[0]==\
                     obter_tamanho_x(m)-1 and coord[1]==0) or (coord[0]==\
                         obter_tamanho_x(m)-1 and coord[1]==\
                             obter_tamanho_y(m)-1) or (coord[0]==0 and coord[1]\
@@ -335,7 +335,6 @@ def prado_para_str(m):
         str += "\n"
     return str[:-1]
 
-#Alto nivel
 def obter_valor_numerico(m,p):
     l,c = obter_pos_y(p),obter_pos_x(p)
     Ncol = obter_tamanho_x(m)
@@ -365,122 +364,20 @@ def obter_movimento(m,p):
             return adjacentes_livres[N%len(adjacentes_livres)]
     return p
 
-#Funcoes externas
-def geracao(m):
-    posicoes = obter_posicao_animais(m)
-    for pos in posicoes:
-        animal = obter_animal(m,pos)
-        if not ja_moveu(animal):
-            animal = aumenta_idade(animal)
-            animal = aumenta_fome(animal)
-            nova_pos = obter_movimento(m,pos)
-            if nova_pos != pos:
-                if eh_predador(animal) and eh_posicao_animal(m,nova_pos) and \
-                    eh_presa(obter_animal(m,nova_pos)):
-                    animal = reset_fome(animal)
-                    eliminar(obter_animal(m,nova_pos))
-                    m = eliminar_animal(m,nova_pos)
-                    m = mover_animal(m,pos,nova_pos)
-                    animal = move(animal)
-                else:
-                    if eh_animal_faminto(animal):
-                        animal = eliminar(animal)
-                        m = eliminar_animal(m,pos)
-                    else:
-                        m = mover_animal(m,pos,nova_pos)
-                        animal = move(animal)
-                if eh_animal_fertil(animal):
-                    bebe = reproduz_animal(animal)
-                    m = inserir_animal(m,bebe,pos)
-            else:
-                if eh_animal_faminto(animal):
-                    animal = eliminar(animal)
-                    m = eliminar_animal(m,pos)
-                if eh_animal_fertil(animal):
-                    animal = diminui_idade(animal)
-        posicoes = obter_posicao_animais(m)
-    return reset_move_prado(m)
-def simula_ecossistema(f,g,v):
-
-    def ler_ficheiro(file_name):
-        r = []
-        a = []
-        s = []
-        with open(file_name,"r") as f:
-            file = f.readlines()
-            size = file[0]
-            size = size[1:-2].split(",")
-            for el in size:
-                s.append(el.replace(" ",""))
-            size = [int(s[0]),int(s[1])]
-            #rochedos
-            rochedos = file[1]
-            if rochedos != "()\n":
-                rochedos = rochedos[1:-2].split(",")
-                for rocha in rochedos:
-                    r += [int(rocha.replace("(","").replace(")","").\
-                        replace(" ",""))]
-            else:
-                r = []
-            #animais
-            animais = file[2:]
-            for animal in animais:
-                animal = animal[1:-2].replace("'","").replace("(","").\
-                    replace(")","").replace(" ","")
-                animal = animal.split(",")
-                for i in range(1,5):
-                    animal[i] = int(animal[i])
-                a += [animal]
-        return size,r,a
-    
-    def prints(g,v,prado):
-        pra = prado
-        if v:
-            for i in range(g):
-                if i != 0:
-                    pra = geracao(pra)
-                    if num_presas != obter_numero_presas(pra) or num_predadores\
-                     != obter_numero_predadores(pra):
-                        print("Predadores: "+str(obter_numero_predadores(pra))+\
-                        " vs Presas: "+str(obter_numero_presas(pra))+\
-                            " (Gen. "+ str(i) +")")
-                        print(prado_para_str(pra))
-                else:
-                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
-                        " vs Presas: "+ str(obter_numero_presas(pra))+\
-                            " (Gen. "+ str(i) +")")
-                    print(prado_para_str(pra))
-                num_presas = obter_numero_presas(pra)
-                num_predadores = obter_numero_predadores(pra)
-        else:
-            for i in range(g+2):
-                if i==0:
-                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
-                        " vs Presas: " + str(obter_numero_presas(pra))+\
-                            " (Gen. "+ str(i) +")")
-                    print(prado_para_str(pra))
-                elif i==g+1:
-                    print("Predadores: " + str(obter_numero_predadores(pra)) +\
-                        " vs Presas: " + str(obter_numero_presas(pra))+ \
-                            " (Gen. "+ str(g) +")")
-                    print(prado_para_str(pra))
-                else:
-                    pra = geracao(pra)
-        return (obter_numero_predadores(pra),obter_numero_presas(pra))
-    
-    size,rochedos,creatures = ler_ficheiro(f)
-    dim = cria_posicao(size[0],size[1])
-    obs = ()
-    po = ()
-    animal = ()
-    i = 0
-    while i <= len(rochedos)-1:
-        obs += (cria_posicao(rochedos[i],rochedos[i+1]),)
-        i+=2
-    for creature in creatures:
-        animal += (cria_animal(creature[0],creature[1],creature[2]),)
-        po += (cria_posicao(creature[3],creature[4]),)
-    prado = cria_prado(dim,obs,animal,po)
-    num_presas_predadores = prints(g,v,prado)
-
-    return num_presas_predadores
+dim = cria_posicao(11, 4)
+obs = (cria_posicao(4,2), cria_posicao(5,2))
+an1 = tuple(cria_animal('rabbit', 5, 0) for i in range(3))
+an2 = (cria_animal('lynx', 20, 15),)
+pos = tuple(cria_posicao(p[0],p[1]) \
+for p in ((5,1),(7,2),(10,1),(6,1)))
+prado = cria_prado(dim, obs, an1+an2, pos)
+print(obter_tamanho_x(prado), obter_tamanho_y(prado))
+print(prado_para_str(prado))
+p1 = cria_posicao(7,2)
+p2 = cria_posicao(9,3)
+prado = mover_animal(prado, p1, p2)
+print(prado_para_str(prado))
+print(obter_valor_numerico(prado, cria_posicao(9,3)))
+print(posicao_para_str(obter_movimento(prado, cria_posicao(5,1))))
+print(posicao_para_str(obter_movimento(prado, cria_posicao(6,1))))
+print(posicao_para_str(obter_movimento(prado, cria_posicao(10,1))))
