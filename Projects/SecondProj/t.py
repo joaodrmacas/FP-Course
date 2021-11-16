@@ -318,15 +318,15 @@ def prado_para_str(m):
                 animal = obter_animal(m,coord)
                 str += animal_para_char(animal)
             elif eh_posicao_obstaculo(m,coord):
-                if (coord[0]==0 and coord[1]==0) or (coord[0]==\
-                    obter_tamanho_x(m)-1 and coord[1]==0) or (coord[0]==\
-                        obter_tamanho_x(m)-1 and coord[1]==\
-                            obter_tamanho_y(m)-1) or (coord[0]==0 and coord[1]\
+                if (obter_pos_x(coord)==0 and obter_pos_y(coord)==0) or (obter_pos_x(coord)==\
+                    obter_tamanho_x(m)-1 and obter_pos_y(coord)==0) or (obter_pos_x(coord)==\
+                        obter_tamanho_x(m)-1 and obter_pos_y(coord)==\
+                            obter_tamanho_y(m)-1) or (obter_pos_x(coord)==0 and obter_pos_y(coord)\
                                 ==obter_tamanho_y(m)-1):
                             str += "+"
-                elif coord[0]==0 or coord[0]==obter_tamanho_x(m)-1:
+                elif obter_pos_x(coord)==0 or obter_pos_x(coord)==obter_tamanho_x(m)-1:
                     str +="|"
-                elif coord[1]==0 or coord[1]==obter_tamanho_y(m)-1:
+                elif obter_pos_y(coord)==0 or obter_pos_y(coord)==obter_tamanho_y(m)-1:
                     str +="-"
                 else:
                     str +="@"

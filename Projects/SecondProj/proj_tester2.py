@@ -208,7 +208,7 @@ class TestTADPrado(unittest.TestCase):
                 self.assertTrue(target.eh_posicao_animal(prado, pos_animal))
                 self.assertTrue(target.animais_iguais(animal, a))
         # both rocks and the border
-        for x, y in ((4, 2), (5, 2), (0, 0), (0, 5), (3, 0), (11, 4), (11, 2),
+        for x, y in ((4, 2), (5, 2), (0, 0), (3, 0), (11, 4), (11, 2),
                      (7, 4)):
             with self.subTest(msg="Test eh_posicao_obstaculo (expecting true)",
                               x=x,
@@ -286,11 +286,12 @@ class TestTADPrado(unittest.TestCase):
         prado = target.eliminar_animal(prado, p1)
         with self.subTest(msg="Test prado_para_str"):
             self.assertEqual(
-                """+----------+
-|....rL...r|
-|...@@.....|
-|..........|
-+----------+""", target.prado_para_str(prado))
+                 """+----------+
+                    |....rL...r|
+                    |...@@.....|
+                    |..........|
+                    +----------+"""\
+    , target.prado_para_str(prado))
 
     def test_inserir_animal(self):
         dim = target.cria_posicao(11, 4)

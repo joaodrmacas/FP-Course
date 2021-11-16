@@ -1,5 +1,13 @@
-....................
+...................
+======================================================================
+FAIL: test_cria_prado (__main__.TestTADPrado) [Test eh_posicao_obstaculo (expecting true)] (x=0, y=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Massas\Documents\GitHub\FP-Course\Projects\SecondProj\proj_tester.py", line 217, in test_cria_prado
+    self.assertTrue(target.eh_posicao_obstaculo(prado, pos_obs))
+AssertionError: False is not true
+
 ----------------------------------------------------------------------
 Ran 20 tests in 0.006s
 
-OK
+FAILED (failures=1)
